@@ -16,7 +16,7 @@ class KF_Application
 		$controller = KF::getController($uri, true);
 		$depth = substr_count($controller->__objectPath, '/');
 
-		array_splice($request, 0, $depth + 1);
+		array_splice($request, 0, $depth);
 
 		$action = array_shift($request);
 		if ($action === null) {
