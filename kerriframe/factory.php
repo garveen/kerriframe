@@ -35,7 +35,10 @@ class KF_Factory
 	private static $_user = null;
 	private static $_sys_config = null;
 
-	public static function get($name, $default = null) {
+	public static function get($name = null, $default = null) {
+		if($name === null) {
+			return self::$_GET;
+		}
 		if (isset(self::$_GET[$name])) {
 			return self::$_GET[$name];
 		} else {
@@ -43,7 +46,10 @@ class KF_Factory
 		}
 	}
 
-	public static function post($name, $default = null) {
+	public static function post($name = null, $default = null) {
+		if($name === null) {
+			return self::$_POST;
+		}
 		if (isset(self::$_POST[$name])) {
 			return self::$_POST[$name];
 		} else {
