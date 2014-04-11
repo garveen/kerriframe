@@ -32,11 +32,12 @@ abstract class KF_Controller
 		} else {
 			throw new Exception("View {$action_template} Not Found", 1);
 		}
-		$output = ob_get_clean();
 		if ($returnOutput) {
-			return $output;
+			return ob_get_clean();
+		} elseif (ob_get_level()) {
+			ob_end_flush();
 		} else {
-			KF::singleton('response')->setContent($output);
+			KF::singleton('response')->setContent(ob_get_clean());
 		}
 	}
 
