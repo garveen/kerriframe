@@ -14,7 +14,7 @@ class KF_Application
 		$uri = $router->request_uri;
 
 		$controller = KF::getController($uri, true);
-		$depth = substr_count($controller->__objectName, '/');
+		$depth = substr_count($controller->__objectPath, '/');
 
 		array_splice($request, 0, $depth + 1);
 

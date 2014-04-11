@@ -105,6 +105,7 @@ class KF_Factory
 				$obj = new $className;
 
 				$obj->__objectName = $className;
+				$obj->__objectPath = $path;
 
 				if (method_exists($obj, 'init')) {
 					if ($params === null) $params = array();
