@@ -106,6 +106,14 @@ class KF_DBO
 			$this->_init();
 		}
 
+		if(is_object($params)) {
+			$params = (array)$params;
+		}
+
+		if(!is_array($params)) {
+			$params = [$params];
+		}
+
 		$sql_after_render = $this->replacePrefix($sql);
 		try {
 			if (empty($params)) {

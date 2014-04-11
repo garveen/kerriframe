@@ -22,6 +22,7 @@ class KF_Application
 		if ($action === null) {
 			$action = 'index';
 		}
+		$controller->__action = $action;
 		$callVar = array(
 			$controller,
 			$action
