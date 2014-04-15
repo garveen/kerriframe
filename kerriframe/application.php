@@ -23,12 +23,16 @@ class KF_Application
 			$action = 'index';
 		}
 		$controller->__action = $action;
+
+		if(method_exists($controller, '__preAction')) {
+			$controller->__preAction();
+		}
 		$callVar = array(
 			$controller,
 			$action
 		);
 
-		if (!is_callable($callVar)) {
+		if (!is_callable($callVar) || $action[0] == '_') {
 			throw new Exception("Cannot call controller method", 1);
 		}
 		call_user_func_array($callVar, $request);
