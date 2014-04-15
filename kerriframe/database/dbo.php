@@ -12,7 +12,7 @@ class KF_DATABASE_record
 		}
 	}
 
-	public function one($sql, $params = array()) {
+	public function one() {
 
 		if ($this->stmt === false) return false;
 
@@ -21,7 +21,7 @@ class KF_DATABASE_record
 		return $result;
 	}
 
-	public function row($sql, $params = array()) {
+	public function row() {
 
 		if ($this->stmt === false) return false;
 
