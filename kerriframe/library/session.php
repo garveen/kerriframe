@@ -15,4 +15,12 @@ class KF_Library_Session {
 	public function set($name, $value) {
 		$_SESSION[$name] = $value;
 	}
+
+	public function set_flashdata($name, $value) {
+		$_SESSION['__KF_FLASHDATA'][$name] = $value;
+	}
+
+	public function flashdata($name) {
+		return isset($_SESSION['__KF_FLASHDATA'][$name]) ? $_SESSION['__KF_FLASHDATA'][$name] : false;
+	}
 }
