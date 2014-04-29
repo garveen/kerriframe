@@ -76,10 +76,15 @@ class KF_Factory
 	}
 
 	public static function load($name, $once = false) {
-		if ($once) {
-			require_once (KF_PATH . $name . '.php');
+		if(is_file($filename = KF_PATH . $name . '.php') || is_file($filename = KF_APP_PATH . $name . '.php')) {
+			if ($once) {
+				require_once ($filename);
+			} else {
+				require ($filename);
+			}
 		} else {
-			require (KF_PATH . $name . '.php');
+			throw new Exception("File Not Found");
+
 		}
 	}
 
