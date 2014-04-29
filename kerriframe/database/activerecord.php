@@ -645,7 +645,7 @@ class KF_DATABASE_activerecord {
 
 			$prefix = (count($this->ar_like) == 0) ? '' : $type;
 
-			$v = $this->escape_like_str($v);
+			$v = $this->escape_str($v, true);
 
 			if ($side == 'none')
 			{

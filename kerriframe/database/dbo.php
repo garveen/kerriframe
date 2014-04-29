@@ -25,7 +25,7 @@ class KF_DATABASE_record
 
 		if ($this->stmt === false) return false;
 
-		$result = $this->stmt->fetch(PDO::FETCH_OBJ);
+		$result = $this->stmt->fetchObject();
 
 		return $result;
 	}
@@ -41,11 +41,22 @@ class KF_DATABASE_record
 			return $result;
 		} else {
 			$ret = array();
-			while (($result = $this->stmt->fetch(PDO::FETCH_OBJ))) {
+			while (($result = $this->stmt->fetchObject())) {
 				$ret[$result->$key_column] = $result;
 			}
 			return $ret;
 		}
+	}
+
+	public function column($column) {
+		if ($this->stmt === false) return false;
+
+		$ret = array();
+		while (($result = $this->stmt->fetchObject())) {
+			$ret[] = $result->$column;
+		}
+		return $ret;
+
 	}
 }
 
