@@ -160,7 +160,7 @@ class KF_Factory
 	 * @param boolen $forceReconnect 是否强制重新连接
 	 * @return DBO
 	 */
-	public static function &getDBO($dbo_name = STORE_DEFAULT_NAME, $forceReconnect = false) {
+	public static function &getDB($dbo_name = STORE_DEFAULT_NAME, $forceReconnect = false) {
 
 		$dbo = & self::$_database_connection_pool[$dbo_name];
 		if (!$forceReconnect && !empty($dbo)) {
@@ -182,11 +182,11 @@ class KF_Factory
 	 * @param  String $dbo_name
 	 */
 	public static function &pingDB($dbo_name = STORE_DEFAULT_NAME) {
-		$dbo = & self::getDBO($dbo_name);
+		$dbo = & self::getDB($dbo_name);
 		if ($dbo->ping()) {
 			return $dbo;
 		} else {
-			return self::getDBO($dbo_name, true);
+			return self::getDB($dbo_name, true);
 		}
 	}
 
