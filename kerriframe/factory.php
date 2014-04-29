@@ -248,58 +248,6 @@ class KF_Factory
 		}
 	}
 
-	// protected static function
-
-	private static $users = array();
-
-	/**
-	 * 获取当前用户的对象（从session获取）
-	 *
-	 * @return user as stdclass
-	 */
-	public static function getCurrentUser() {
-		if (self::isAnonymous()) {
-			return null;
-		}
-
-		if (self::$_user === null) {
-			self::$_user = clone ($_SESSION['userdata']);
-			if (self::getUserById(self::$_user->id)->status == 9) {
-
-				// 清除session
-				session_unset();
-				self::$_user = null;
-				return null;
-			}
-			self::$_user->username = base64_decode(self::$_user->username);
-		}
-
-		return self::$_user;
-	}
-
-	/**
-	 * 设置当前用户的属性表
-	 *
-	 * @param String $property 属性名
-	 * @param String $value 属性值
-	 * @return true 表示成功
-	 */
-	public static function setCurrentUserProperty($property, $value) {
-		if (self::isAnonymous()) {
-			return false;
-		}
-
-		if ($property == 'username') {
-			$value = base64_encode($value);
-		}
-
-		$_SESSION['userdata']->$property = $value;
-
-		self::$_user = null;
-
-		return true;
-	}
-
 	/**
 	 * 获取 mailer 对象
 	 *
@@ -328,63 +276,6 @@ class KF_Factory
 		}
 
 		return self::$_mailer;
-	}
-
-	/**
-	 * 发送邮件
-	 *
-	 * @param String $subject 标题
-	 * @param String $body  内容
-	 * @param String $sendTo  收件人email地址
-	 * @param String $sendToName  收件人名字
-	 * @param String $altBody
-	 * @param String $isHTML  是否是HTML格式的邮件
-	 * @return true 表示成功
-	 */
-	public static function sendMail($subject, $body, $sendTo, $sendToName = null, $altBody = "", $isHTML = false) {
-		$mailer = & self::getMailer();
-
-		$mailer->Subject = $subject;
-		$mailer->Body = $body;
-		$mailer->AltBody = $altBody;
-		$mailer->ClearAddresses();
-
-		//清除邮件列表
-		$mailer->AddAddress($sendTo, $sendToName);
-
-		$mailer->IsHTML($isHTML);
-
-		return $mailer->Send();
-	}
-
-	/**
-	 * 获取模板文件的路径
-	 *
-	 * @param String $skin_name 皮肤名字
-	 * @return 模板的实际路径
-	 */
-	public static function getTemplatePath($skin_name = null) {
-		$path = null;
-
-		if ($path === null) {
-			if ($skin_name === null) {
-				$path = ES_APP_ROOT . '/templates/' . self::$_config->skin_name . '/';
-			} else {
-				$path = ES_APP_ROOT . '/templates/' . $skin_name . '/';
-			}
-		}
-
-		return $path;
-	}
-
-	/**
-	 * 做 HASH 操作
-	 *
-	 * @param String $seed 种子
-	 * @return MD5 HASH之后的字符串
-	 */
-	public static function getHash($seed) {
-		return md5(@self::$_config->secret . $seed);
 	}
 
 	/**
