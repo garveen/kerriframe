@@ -225,7 +225,7 @@ class KF_Factory
 			return $controller;
 		}
 		catch(Exception $e) {
-			throw new KF_Exception("Controller {$name} Not Found");
+			self::raise(new KF_Exception("Controller {$name} Not Found"));
 		}
 	}
 
@@ -244,7 +244,7 @@ class KF_Factory
 			return $model;
 		}
 		catch(Exception $e) {
-			throw new KF_Exception("Model {$name} Not Found");
+			self::raise(KF_Exception("Model {$name} Not Found"));
 		}
 	}
 
@@ -416,6 +416,11 @@ class KF_Factory
 	public static function initApp($dirname = 'app') {
 		self::load_once('appgen');
 		Appgen::init($dirname);
+	}
+
+	public function raise($e) {
+		echo $e->getMessage();
+		exit;
 	}
 }
 
