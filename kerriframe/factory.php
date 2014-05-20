@@ -15,8 +15,8 @@ class KF_Factory
 		self::load('model');
 		self::load('functions');
 
-		self::load('database/dbo');
 		self::load('database/activerecord');
+		self::load('database/dbo');
 
 		$config = self::getConfig();
 

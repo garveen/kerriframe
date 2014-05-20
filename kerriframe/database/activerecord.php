@@ -44,9 +44,6 @@ class KF_DATABASE_activerecord {
 	var $_protect_identifiers	= TRUE;
 	var $_reserved_identifiers	= array('*'); // Identifiers that should NOT be escaped
 
-	function query($sql) {
-		return $this->dbo->query($sql);
-	}
 
 	// --------------------------------------------------------------------
 
@@ -2050,15 +2047,6 @@ class KF_DATABASE_activerecord {
 
 	var $options = array();
 
-	function __construct($dbo)
-	{
-		$this->dbo = $dbo;
-
-
-		$this->trans_enabled = FALSE;
-
-		$this->_random_keyword = ' RND('.time().')'; // database specific random keyword
-	}
 
 	/**
 	 * Non-persistent database connection
@@ -2149,7 +2137,7 @@ class KF_DATABASE_activerecord {
 	 */
 	function _version()
 	{
-		return $this->dbo->getAttribute(PDO::ATTR_CLIENT_VERSION);
+		return $this->getAttribute(PDO::ATTR_CLIENT_VERSION);
 	}
 
 	// --------------------------------------------------------------------
@@ -2164,7 +2152,7 @@ class KF_DATABASE_activerecord {
 	function _execute($sql)
 	{
 		$sql = $this->_prep_query($sql);
-		$result_id = $this->dbo->prepare($sql);
+		$result_id = $this->prepare($sql);
 		$result_id->execute();
 
 		if (is_object($result_id))
@@ -2245,7 +2233,7 @@ class KF_DATABASE_activerecord {
 		}
 
 		//Escape the string
-		$str = $this->dbo->quote($str);
+		$str = $this->quote($str);
 
 		//If there are duplicated quotes, trim them away
 		if (strpos($str, "'") === 0)
@@ -2304,7 +2292,7 @@ class KF_DATABASE_activerecord {
 		}
 		else
 		{
-			return $this->dbo->lastInsertId($name);
+			return $this->lastInsertId($name);
 		}
 	}
 
@@ -2405,7 +2393,7 @@ class KF_DATABASE_activerecord {
 	 */
 	function _error_message()
 	{
-		$error_array = $this->dbo->errorInfo();
+		$error_array = $this->errorInfo();
 		return $error_array[2];
 	}
 
@@ -2419,7 +2407,7 @@ class KF_DATABASE_activerecord {
 	 */
 	function _error_number()
 	{
-		return $this->dbo->errorCode();
+		return $this->errorCode();
 	}
 
 	// --------------------------------------------------------------------

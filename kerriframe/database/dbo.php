@@ -6,11 +6,6 @@ class KF_DATABASE_record
 	function __construct($stmt = false) {
 		$this->stmt = $stmt;
 	}
-	function __call($name, $args) {
-		if ($name == 'list') {
-			return call_user_func_array([$this, 'result'] , $args);
-		}
-	}
 
 	public function one() {
 
@@ -60,7 +55,7 @@ class KF_DATABASE_record
 	}
 }
 
-class KF_DBO
+class KF_DBO extends KF_DATABASE_activerecord
 {
 	public static $qeuries = array();
 	public $name;
@@ -77,6 +72,12 @@ class KF_DBO
 		) , $args);
 	}
 	public function __construct($dsn, $username, $password, $options = null) {
+
+		$this->trans_enabled = FALSE;
+
+		$this->_random_keyword = ' RND('.time().')'; // database specific random keyword
+
+
 		if ($options === null) {
 			$options = array(
 				PDO::ATTR_PERSISTENT => true
@@ -97,8 +98,9 @@ class KF_DBO
 		$params = $this->params;
 		$this->pdo = new PDO($params['dsn'] , $params['username'] , $params['password'] , $params['options']);
 
-		// 设置错误报告模式
+		// 设置错误报告模式 如果执行失败且不在debug模式，将捕获并写log
 		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 	}
 
 	public function prepare($sql, $driver_options = array()) {
@@ -154,11 +156,26 @@ class KF_DBO
 			$stmt->queryString,
 			$params
 		];
+
+		if ($this->is_write_type($sql))
+		{
+			return TRUE;
+		}
+
 		$record = new KF_DATABASE_record($stmt);
 		return $record;
 	}
 
+	function is_write_type($sql) {
+		if ( ! preg_match('/^\s*"?(SET|INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD DATA|COPY|ALTER|GRANT|REVOKE|LOCK|UNLOCK)\s/i', $sql)) {
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+	}
+
 	public function lastInsertId() {
+		if(!$this->pdo) return false;
 		return $this->pdo->lastInsertId();
 	}
 
