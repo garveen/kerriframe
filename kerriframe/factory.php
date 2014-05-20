@@ -332,7 +332,7 @@ class KF_Factory
 		Appgen::init($dirname);
 	}
 
-	public function raise($e) {
+	public static function raise($e) {
 		echo $e->getMessage();
 		exit;
 	}
