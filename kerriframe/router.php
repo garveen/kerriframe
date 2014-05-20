@@ -41,7 +41,7 @@ class KF_Router
 
 	private function _detect_uri() {
 		if (!isset($_SERVER['REQUEST_URI']) OR !isset($_SERVER['SCRIPT_NAME'])) {
-			return '';
+			return '/';
 		}
 
 		$uri = $_SERVER['REQUEST_URI'];
