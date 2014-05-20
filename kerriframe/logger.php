@@ -13,7 +13,7 @@ class KF_Logger
 	 */
 	public function __construct() {
 		$config = KF::getConfig();
-		$this->_log_path = ($config->log_path != '') ? $config->log_path : KF_APP_PATH . 'logs/';
+		$this->_log_path = ($config->log_path != '') ? $config->log_path : KF_APP_PATH . 'log/';
 
 		if (!is_dir($this->_log_path)) {
 			$this->_enabled = FALSE;

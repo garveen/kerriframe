@@ -28,6 +28,10 @@ class KF extends KF_Factory
 	public static function site_url($uri = '') {
 		return parent::singleton('router')->site_url($uri);
 	}
+
+	public static function getClientIP() {
+		return $_SERVER['REMOTE_ADDR'];
+	}
 }
 
 KF::init();

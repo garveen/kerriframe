@@ -5,6 +5,8 @@ class KF_Factory
 {
 	protected static $_GET;
 	protected static $_POST;
+
+	protected static $_security;
 	private function __construct() {
 	}
 
@@ -17,6 +19,8 @@ class KF_Factory
 
 		self::load('database/activerecord');
 		self::load('database/dbo');
+
+		self::$_security = self::singleton('library/security');
 
 		$config = self::getConfig();
 
@@ -36,26 +40,34 @@ class KF_Factory
 	private static $_user = null;
 	private static $_sys_config = null;
 
-	public static function get($name = null, $default = null) {
+	public static function get($name = null, $xss_clean = false) {
 		if($name === null) {
-			return self::$_GET;
-		}
-		if (isset(self::$_GET[$name])) {
-			return self::$_GET[$name];
+			$ret = self::$_GET;
+		} elseif (isset(self::$_GET[$name])) {
+			$ret = self::$_GET[$name];
 		} else {
-			return $default;
+			return false;
 		}
+
+		if($xss_clean) {
+			$ret = self::$_security->xss_clean($ret);
+		}
+		return $ret;
 	}
 
-	public static function post($name = null, $default = null) {
+	public static function post($name = null, $xss_clean = false) {
 		if($name === null) {
-			return self::$_POST;
-		}
-		if (isset(self::$_POST[$name])) {
-			return self::$_POST[$name];
+			$ret = self::$_POST;
+		} elseif (isset(self::$_POST[$name])) {
+			$ret = self::$_POST[$name];
 		} else {
-			return $default;
+			return false;
 		}
+
+		if($xss_clean) {
+			$ret = self::$_security->xss_clean($ret);
+		}
+		return $ret;
 	}
 
 	/**
@@ -63,7 +75,7 @@ class KF_Factory
 	 *
 	 * @return KF_Config对象
 	 */
-	public static function &getConfig() {
+	public static function &getConfig($name = null) {
 		if (self::$_config == null) {
 			self::load('config');
 			self::$_config = new KF_Config;
@@ -72,7 +84,11 @@ class KF_Factory
 				self::$_config->$k = $v;
 			}
 		}
-		return self::$_config;
+		if($name === null) {
+			return self::$_config;
+		} else {
+			return self::$_config->$name;
+		}
 	}
 
 	public static function load($name, $once = false) {
@@ -121,10 +137,10 @@ class KF_Factory
 
 				if (method_exists($obj, 'init')) {
 					if ($params === null) $params = array();
-					call_user_func_array(array(
+					call_user_func_array([
 						$obj,
 						'init'
-					) , $params);
+					] , $params);
 				}
 
 				self::$_registry[$className] = $obj;
@@ -138,6 +154,12 @@ class KF_Factory
 	}
 
 	public static function load_once($name) {
+		static $cache = [];
+		if(isset($cache[$name])) {
+			return true;
+		} else {
+			$cache[$name] = true;
+		}
 		return self::load($name, true);
 	}
 
@@ -170,7 +192,6 @@ class KF_Factory
 		$db_config = self::getConfig()->database[$dbo_name];
 		$dbo = new KF_DBO($db_config['url'] , $db_config['user'] , $db_config['pass'] , isset($db_config['options']) ? $db_config['options'] : null);
 		$dbo->name = $dbo_name;
-		$dbo->ar = new KF_DATABASE_activerecord($dbo);
 
 		self::$_database_connection_pool[$dbo_name] = $dbo;
 
@@ -232,15 +253,17 @@ class KF_Factory
 	public static function getWidget() {
 	}
 
+	// public static function
+
 	/**
 	 * 获取 model 对象
 	 *
 	 * @param String $name model名（英文名，唯一的）
 	 * @return Model Object
 	 */
-	public static function &getModel($name, $dig = false) {
+	public static function &getModel($name) {
 		try {
-			$model = self::singleton("model/{$name}", null, $dig, false);
+			$model = self::singleton("model/{$name}", null, false, false);
 			return $model;
 		}
 		catch(Exception $e) {
