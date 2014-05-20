@@ -35,7 +35,7 @@ abstract class KF_Controller
 		if ($returnOutput) {
 			return ob_get_clean();
 		} elseif (ob_get_level()) {
-			ob_end_flush();
+			ob_flush();
 		} else {
 			KF::singleton('response')->setContent(ob_get_clean());
 		}
