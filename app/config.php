@@ -10,7 +10,7 @@ $config = [
 		// '(:any)' => 'welcome/$1',
 		// '(:num)' => 'welcome/detail/$1',
 		// default
-		'' => 'welcome',
+		'/' => 'welcome',
 	] ,
 
 	'unset_GET_POST' => true,
