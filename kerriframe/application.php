@@ -36,9 +36,12 @@ class KF_Application
 			throw new Exception("Cannot call controller method", 1);
 		}
 		// load the class
-		KF::singleton('response');
+		$response = KF::singleton('response');
+		ob_start();
 		call_user_func_array($callVar, $request);
-		KF::singleton('response')->flush();
+		$content = ob_get_clean();
+		$response->setContent($content);
+		$response->flush();
 
 	}
 }
