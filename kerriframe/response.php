@@ -7,12 +7,15 @@ class KF_Response
 	private static $body = '';
 	private static $html_headers = array();
 
-	public static function header($key, $value, $overwrite = true) {
+	public static function header($key, $value = '', $overwrite = true) {
+		if($value == '') {
+			@list($key, $value) = explode(':', $key, 2);
+		}
 		$key = strtolower(trim($key));
 		if (!$overwrite && isset(self::$headers[$key])) {
 			return false;
 		}
-		self::$headers[] = $value;
+		self::$headers[$key] = $value;
 		return true;
 	}
 
