@@ -7,6 +7,7 @@ class Appgen
 		'model' => [] ,
 		'view' => [] ,
 		'log' => [] ,
+		'core' => [] ,
 	];
 
 	static $path = __DIR__;

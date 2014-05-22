@@ -43,7 +43,7 @@ abstract class KF_Controller
 
 	public function redirect($link, $message = null) {
 		if (!preg_match('#^https?://#i', $link)) {
-			$link = KF::site_url($link);
+			$link = KF::siteUrl($link);
 		}
 		if (!headers_sent() && empty($message)) {
 			header('Location:' . $link);

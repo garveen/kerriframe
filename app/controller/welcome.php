@@ -1,5 +1,5 @@
 <?php
-class KF_Controller_Welcome extends KF_Controller
+class KF_Controller_Welcome extends MY_Controller
 {
 	public function index() {
 		$this->redirect('welcome/message');

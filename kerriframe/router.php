@@ -14,7 +14,6 @@ class KF_Router
 		$uri = $this->_detect_uri();
 		$this->base_url = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']) , '', $_SERVER['SCRIPT_NAME']) , '/');
 		$this->site_url = $this->base_url(KF::getConfig()->index_page);
-
 		foreach ($this->_routes as $route) {
 
 			if ($params = $route->match($uri)) {

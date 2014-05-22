@@ -3,7 +3,7 @@ $config = [
 
 	'environment' => 'debug',
 
-	'index_page' => '',
+	'index_page' => 'index.php',
 
 	'routes' => [
 
@@ -37,5 +37,7 @@ $config = [
 			]
 		] ,
 	] ,
+
+	'class_prefix' => 'MY_',
 ];
 

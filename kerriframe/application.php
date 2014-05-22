@@ -32,9 +32,17 @@ class KF_Application
 			$action
 		);
 
-		if (!is_callable($callVar) || $action[0] == '_') {
+		if(!is_callable($callVar)) {
 			throw new Exception("Cannot call controller method", 1);
 		}
+
+		$this->callAction($callVar, $request);
+
+		KF::singleton('response')->flush();
+
+	}
+
+	public function callAction($callVar, $request) {
 		// load the class
 		$response = KF::singleton('response');
 		ob_start();

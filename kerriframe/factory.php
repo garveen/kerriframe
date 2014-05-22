@@ -102,13 +102,20 @@ class KF_Factory
 			throw new Exception("File Not Found");
 
 		}
+		if (is_file(KF_APP_PATH . 'core/' . $name . '.php')) {
+			if ($once) {
+				require_once (KF_APP_PATH . 'core/' . $name . '.php');
+			} else {
+				require (KF_APP_PATH . 'core/' . $name . '.php');
+			}
+		}
 	}
 
 	public static function singleton($name, $params = null, $dig = false, $core = true) {
 
-		$className = 'KF_' . str_replace('/', '_', $name);
-		if (isset(self::$_registry[$className])) {
-			return self::$_registry[$className];
+		$storeName = str_replace('/', '_', $name);
+		if (isset(self::$_registry[$storeName])) {
+			return self::$_registry[$storeName];
 		}
 		if ($core) {
 			$base_path = KF_PATH;
@@ -129,7 +136,14 @@ class KF_Factory
 			$filename = $base_path . $path . '.php';
 			if (is_file($filename)) {
 				require ($filename);
-				$className = 'KF_' . str_replace('/', '_', $path);
+				$storeName = str_replace('/', '_', $path);
+				if($core && is_file(KF_APP_PATH . 'core/' . $path . '.php')) {
+					require (KF_APP_PATH . 'core/' . $path . '.php');
+					$className = KF::getConfig()->class_prefix . $storeName;
+				} else {
+					$className = 'KF_' . $storeName;
+				}
+
 				$obj = new $className;
 
 				$obj->__objectName = $className;
@@ -143,7 +157,7 @@ class KF_Factory
 					] , $params);
 				}
 
-				self::$_registry[$className] = $obj;
+				self::$_registry[$storeName] = $obj;
 				return $obj;
 			}
 
@@ -167,7 +181,7 @@ class KF_Factory
 
 	public static function getCache($handler = 'memcache', $store = STORE_DEFAULT_NAME) {
 		if (!self::$_cache_init) {
-			self::load_once('cache/cache');
+			self::loadOnce('cache/cache');
 			self::$_cache_init = true;
 		}
 		return cacheRegister::singleton($handler, $store);
@@ -328,7 +342,7 @@ class KF_Factory
 	// }
 
 	public static function initApp($dirname = 'app') {
-		self::load_once('appgen');
+		self::loadOnce('appgen');
 		Appgen::init($dirname);
 	}
 

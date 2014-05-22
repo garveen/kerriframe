@@ -18,7 +18,7 @@ class cacheRegister
 	public static function singleton($handler, $store) {
 		if (!isset(self::$_pool[$handler][$store])) {
 			$ins = self::$handler($store);
-			KF::load_once("cache/{$handler}");
+			KF::loadOnce("cache/{$handler}");
 			$className = "KF_{$handler}CacheManager";
 			self::$_pool[$handler][$store] = new $className($ins);
 		}
