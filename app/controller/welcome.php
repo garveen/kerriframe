@@ -6,9 +6,7 @@ class KF_Controller_Welcome extends MY_Controller
 	}
 
 	public function message() {
-		$nameModel = KF::getModel('name', [
-			'Kerriframe'
-		]);
+		$nameModel = KF::getModel('name');
 		$name = $nameModel->getName();
 		$this->display('welcome', [
 			'name' => $name

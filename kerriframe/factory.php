@@ -1,12 +1,18 @@
 <?php
 define("STORE_DEFAULT_NAME", "main");
 
+/**
+ * Factory class, generate common objects
+ */
 class KF_Factory
 {
 	protected static $_GET;
 	protected static $_POST;
 
 	protected static $_security;
+	/**
+	 * singleton
+	 */
 	private function __construct() {
 	}
 
@@ -33,13 +39,17 @@ class KF_Factory
 		}
 	}
 
-	private static $_instance = null;
 
 	private static $_config = null;
 	private static $_mailer = null;
 	private static $_user = null;
 	private static $_sys_config = null;
 
+	/**
+	 * Fetch an item from the GET array
+	 * @param  string   $name
+	 * @param  boolean $xss_clean
+	 */
 	public static function get($name = null, $xss_clean = false) {
 		if($name === null) {
 			$ret = self::$_GET;
@@ -55,6 +65,11 @@ class KF_Factory
 		return $ret;
 	}
 
+	/**
+	 * Fetch an item from the POST array
+	 * @param  string  $name
+	 * @param  boolean $xss_clean
+	 */
 	public static function post($name = null, $xss_clean = false) {
 		if($name === null) {
 			$ret = self::$_POST;
@@ -71,9 +86,9 @@ class KF_Factory
 	}
 
 	/**
-	 * 获取配置文件的配置对象
+	 * Get the config instance, loaded from KF_APP_PATH/config.php
 	 *
-	 * @return KF_Config对象
+	 * @return An instance of KF_Config
 	 */
 	public static function &getConfig($name = null) {
 		if (self::$_config == null) {
@@ -91,6 +106,11 @@ class KF_Factory
 		}
 	}
 
+	/**
+	 * Load a php file, either from Kerriframe, or user space.
+	 * @param  string  $name
+	 * @param  boolean $once
+	 */
 	public static function load($name, $once = false) {
 		if(is_file($filename = KF_PATH . $name . '.php') || is_file($filename = KF_APP_PATH . $name . '.php')) {
 			if ($once) {
@@ -111,6 +131,13 @@ class KF_Factory
 		}
 	}
 
+	/**
+	 * Return the singleton, or generate if it's not exists.
+	 * @param  string  $name
+	 * @param  array   $params If set, call the instance's "init" method
+	 * @param  boolean $dig    Dig the path
+	 * @param  boolean $core   Search class from Kerriframe or user space
+	 */
 	public static function singleton($name, $params = null, $dig = false, $core = true) {
 
 		$storeName = str_replace('/', '_', $name);
@@ -167,6 +194,10 @@ class KF_Factory
 		throw new KF_Exception("Class {$name} Not Found ");
 	}
 
+	/**
+	 * Shortcut of self::load
+	 * @param  string $name
+	 */
 	public static function load_once($name) {
 		static $cache = [];
 		if(isset($cache[$name])) {
@@ -179,6 +210,11 @@ class KF_Factory
 
 	protected static $_cache_init = false;
 
+	/**
+	 * Get a cache singleton
+	 * @param  string $handler
+	 * @param  string $store   store name
+	 */
 	public static function getCache($handler = 'memcache', $store = STORE_DEFAULT_NAME) {
 		if (!self::$_cache_init) {
 			self::loadOnce('cache/cache');
@@ -190,11 +226,10 @@ class KF_Factory
 	private static $_database_connection_pool = array();
 
 	/**
-	 * 获取数据库处理对象
+	 * Get a database singleton
 	 *
 	 * @param String $dbo_name
-	 * @param boolen $forceReconnect 是否强制重新连接
-	 * @return DBO
+	 * @param boolen $forceReconnect
 	 */
 	public static function &getDB($dbo_name = STORE_DEFAULT_NAME, $forceReconnect = false) {
 
@@ -213,7 +248,7 @@ class KF_Factory
 	}
 
 	/**
-	 * ping数据库连接；若失败则重新连接
+	 * ping the database; if failed, reconnect
 	 * @param  String $dbo_name
 	 */
 	public static function &pingDB($dbo_name = STORE_DEFAULT_NAME) {
@@ -228,17 +263,17 @@ class KF_Factory
 	private static $_registry = array();
 
 	/**
-	 * 注册一个变量到 registry 区域
+	 * register a variable to $_registry
 	 *
 	 * @param String $key
-	 * @param Object $value
+	 * @param mixed  $value
 	 */
 	public static function registry($key, $value) {
 		self::$_registry[$key] = $value;
 	}
 
 	/**
-	 * 从 registry 区域获取一个变量的值
+	 * fetch from registry
 	 *
 	 * @param String $key
 	 * @return Object
@@ -248,8 +283,7 @@ class KF_Factory
 	}
 
 	/**
-	 * 获取 controller 对象
-	 * 先试图读取 registry 区域，读不到才去 构造
+	 * Get the controller singleton
 	 *
 	 * @param String $name
 	 * @return Controller Object
@@ -267,12 +301,10 @@ class KF_Factory
 	public static function getWidget() {
 	}
 
-	// public static function
-
 	/**
-	 * 获取 model 对象
+	 * Get the model singleton
 	 *
-	 * @param String $name model名（英文名，唯一的）
+	 * @param String $name
 	 * @return Model Object
 	 */
 	public static function &getModel($name) {
@@ -316,7 +348,7 @@ class KF_Factory
 	}
 
 	/**
-	 * 获得操作开放平台的Client类
+	 * 获得操作开放平台的Client�
 	 * @param string $platfrom qzone,sina
 	 * @param string $accessToken 某些不需要登录的api不应该填写accessToken
 	 * modified by rur 2012-07-12
@@ -341,11 +373,19 @@ class KF_Factory
 	// 	return $yarClient;
 	// }
 
+	/**
+	 * skeleton generator
+	 * @param  string $dirname User space's dir name
+	 */
 	public static function initApp($dirname = 'app') {
 		self::loadOnce('appgen');
 		Appgen::init($dirname);
 	}
 
+	/**
+	 * raise an error
+	 * @param  Exceiption $e
+	 */
 	public static function raise($e) {
 		echo $e->getMessage();
 		exit;
