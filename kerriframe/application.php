@@ -9,6 +9,16 @@ class KF_Application
 		}
 
 		$router->route();
+		$this->dispatch();
+
+
+	}
+
+	public function dispatch() {
+		$router = KF::singleton('router');
+		if(!$router->request) {
+			KF::raise('router not init', 500);
+		}
 
 		$request = $router->request;
 		$uri = $router->request_uri;
@@ -23,7 +33,6 @@ class KF_Application
 			$action = 'index';
 		}
 		$controller->__action = $action;
-
 		if(method_exists($controller, '__preAction')) {
 			$controller->__preAction();
 		}
@@ -33,13 +42,16 @@ class KF_Application
 		);
 
 		if(!is_callable($callVar)) {
-			throw new Exception("Cannot call controller method", 1);
+			KF::raise(new KF_Exception("Cannot call controller method"));
+		}
+		try {
+			$this->callAction($callVar, $request);
+		} catch(Exception $e) {
+			KF::raise($e, 500);
 		}
 
-		$this->callAction($callVar, $request);
 
 		KF::singleton('response')->flush();
-
 	}
 
 	public function callAction($callVar, $request) {
@@ -49,7 +61,6 @@ class KF_Application
 		call_user_func_array($callVar, $request);
 		$content = ob_get_clean();
 		$response->setContent($content);
-		$response->flush();
 
 	}
 }

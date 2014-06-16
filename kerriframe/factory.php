@@ -119,7 +119,7 @@ class KF_Factory
 				require ($filename);
 			}
 		} else {
-			throw new Exception("File Not Found");
+			throw new KF_Exception("File Not Found");
 
 		}
 		if (is_file(KF_APP_PATH . 'core/' . $name . '.php')) {
@@ -166,7 +166,7 @@ class KF_Factory
 				$storeName = str_replace('/', '_', $path);
 				if($core && is_file(KF_APP_PATH . 'core/' . $path . '.php')) {
 					require (KF_APP_PATH . 'core/' . $path . '.php');
-					$className = KF::getConfig()->class_prefix . $storeName;
+					$className = KF::getConfig('class_prefix') . $storeName;
 				} else {
 					$className = 'KF_' . $storeName;
 				}
@@ -298,9 +298,6 @@ class KF_Factory
 		}
 	}
 
-	public static function getWidget() {
-	}
-
 	/**
 	 * Get the model singleton
 	 *
@@ -313,7 +310,16 @@ class KF_Factory
 			return $model;
 		}
 		catch(Exception $e) {
-			self::raise(KF_Exception("Model {$name} Not Found"));
+			self::raise(new KF_Exception("Model {$name} Not Found"));
+		}
+	}
+
+	public static function __callStatic($name, $args) {
+		if(substr($name, 0, 3) == 'get') {
+			$className = strtolower(substr($name, 3) . '/' . $args[0]);
+			return self::singleton($className, null, false, false);
+		} else {
+			self::raise(new KF_Exception("Undefined method KF::{$name}"), 500);
 		}
 	}
 
@@ -348,7 +354,7 @@ class KF_Factory
 	}
 
 	/**
-	 * 获得操作开放平台的Client�
+	 * 获得操作开放平台的Client类
 	 * @param string $platfrom qzone,sina
 	 * @param string $accessToken 某些不需要登录的api不应该填写accessToken
 	 * modified by rur 2012-07-12
@@ -384,12 +390,31 @@ class KF_Factory
 
 	/**
 	 * raise an error
-	 * @param  Exceiption $e
+	 * @param  Exception $e
+	 * @param  int        http_status http status code
 	 */
-	public static function raise($e) {
-		echo $e->getMessage();
-		exit;
+	public static function raise($e, $http_status = 404) {
+		if(KF::getConfig('environment') == 'debug') {
+			throw $e;
+		}
+		if($e instanceof Exception) {
+			KF::log($e, 'error');
+		}
+		$routes = KF::getConfig('routes');
+		if(isset($routes[$http_status . '_override']) && $routes[$http_status . '_override'] != '') {
+			$router = KF::singleton('router');
+			$router->route($routes[$http_status . '_override']);
+			$application = KF::singleton('application');
+			$application->dispatch();
+			exit;
+		} else {
+			http_response_code($http_status);
+			echo '<h1>Something Wrong</h1>';
+			exit;
+		}
+
 	}
+
 }
 
 /* End of file */

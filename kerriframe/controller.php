@@ -30,7 +30,7 @@ abstract class KF_Controller
 			extract($vars);
 			require ($fileName);
 		} else {
-			throw new Exception("View {$action_template} Not Found", 1);
+			throw new KF_Exception("View {$action_template} Not Found", 1);
 		}
 		if ($returnOutput) {
 			return ob_get_clean();

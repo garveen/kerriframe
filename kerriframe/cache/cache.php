@@ -43,7 +43,7 @@ class cacheRegister
 		if (empty($redis)) {
 			$redis_servers = self::$_config->redis_servers[$store_name];
 			if (empty($redis_servers)) {
-				throw new KF_ConfigException("Can't find configure of (" . $store_name . ") redis servers !");
+				throw new KF_Exception("Can't find configure of (" . $store_name . ") redis servers !");
 			}
 			if (count($redis_servers) > 0) {
 				$redis = new Redis();

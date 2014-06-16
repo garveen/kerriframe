@@ -9,7 +9,7 @@ class KF extends KF_Factory
 	}
 
 	protected static $_logger = false;
-	public static function log($message, $level = 'error') {
+	public static function log($message, $level = 'info') {
 		if (!self::$_logger) {
 			self::$_logger = self::singleton('logger');
 		}
@@ -21,11 +21,11 @@ class KF extends KF_Factory
 		return parent::singleton('response')->header($k, $v);
 	}
 
-	public static function base_url($uri = '') {
+	public static function baseUrl($uri = '') {
 		return parent::singleton('router')->base_url($uri);
 	}
 
-	public static function site_url($uri = '') {
+	public static function siteUrl($uri = '') {
 		return parent::singleton('router')->site_url($uri);
 	}
 

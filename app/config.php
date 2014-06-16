@@ -5,12 +5,20 @@ $config = [
 
 	'index_page' => 'index.php',
 
+	/**
+	 * error, debug, info
+	 */
+	'log_threshold' => 'error',
+
 	'routes' => [
 
 		// '(:any)' => 'welcome/$1',
 		// '(:num)' => 'welcome/detail/$1',
 		// default
 		'/' => 'welcome',
+		// error pages
+		'404_override' => 'error/status_404',
+		'500_override' => 'error/status_500',
 	] ,
 
 	'unset_GET_POST' => true,
