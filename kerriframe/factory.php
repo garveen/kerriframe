@@ -162,13 +162,15 @@ class KF_Factory
 			$path .= array_shift($pathArr);
 			$filename = $base_path . $path . '.php';
 			if (is_file($filename)) {
-				require ($filename);
 				$storeName = str_replace('/', '_', $path);
 				if($core && is_file(KF_APP_PATH . 'core/' . $path . '.php')) {
 					require (KF_APP_PATH . 'core/' . $path . '.php');
 					$className = KF::getConfig('class_prefix') . $storeName;
 				} else {
 					$className = 'KF_' . $storeName;
+				}
+				if(!class_exists($className)) {
+					require ($filename);
 				}
 
 				$obj = new $className;
@@ -402,10 +404,8 @@ class KF_Factory
 		}
 		$routes = KF::getConfig('routes');
 		if(isset($routes[$http_status . '_override']) && $routes[$http_status . '_override'] != '') {
-			$router = KF::singleton('router');
-			$router->route($routes[$http_status . '_override']);
 			$application = KF::singleton('application');
-			$application->dispatch();
+			$application->dispatch($routes[$http_status . '_override']);
 			exit;
 		} else {
 			http_response_code($http_status);

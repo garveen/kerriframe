@@ -1,13 +1,18 @@
 <?php
 class KF_Response
 {
+	public static function __callStatic($name, $args) {
+		$instance = KF::singleton('response');
+		return call_user_func_array(array($instance, $name), $args);
+	}
+
 	private static $headers = array(
 		'content-type' => 'text/html; charset=UTF-8'
 	);
 	private static $body = '';
 	private static $html_headers = array();
 
-	public static function header($key, $value = '', $overwrite = true) {
+	public function header($key, $value = '', $overwrite = true) {
 		if($value == '') {
 			@list($key, $value) = explode(':', $key, 2);
 		}
@@ -19,25 +24,25 @@ class KF_Response
 		return true;
 	}
 
-	public static function setContent($content) {
+	public function setContent($content) {
 		self::$body .= $content;
 	}
 
-	public static function outputHeader() {
+	public function outputHeader() {
 		foreach (self::$headers as $k => $v) {
 			header("{$k}:{$v}");
 		}
 	}
 
-	public static function getContent($name) {
+	public function getContent($name) {
 		return self::$body;
 	}
 
-	public static function addHtmlHeader($value) {
+	public function addHtmlHeader($value) {
 		self::$html_headers[] = $value;
 	}
 
-	public static function getHtmlHeader() {
+	public function getHtmlHeader() {
 		return self::$content;
 	}
 

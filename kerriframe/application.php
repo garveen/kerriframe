@@ -8,14 +8,16 @@ class KF_Application
 			$router->addRoute($k, $v);
 		}
 
-		$router->route();
 		$this->dispatch();
 
 
 	}
 
-	public function dispatch() {
+	public function dispatch($uri = '') {
+
 		$router = KF::singleton('router');
+		$router->route($uri);
+
 		if(!$router->request) {
 			KF::raise('router not init', 500);
 		}
