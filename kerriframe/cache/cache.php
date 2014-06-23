@@ -12,6 +12,7 @@ interface KF_CacheManager {
 
 class cacheRegister
 {
+	private static $_config;
 	private function __construct() {
 	}
 	private static $_pool = array();
@@ -25,7 +26,7 @@ class cacheRegister
 		return self::$_pool[$handler][$store];
 	}
 
-	private $_redis_pool = array();
+	private static $_redis_pool = array();
 
 	/**
 	 * 获取 redis 对象
@@ -37,11 +38,11 @@ class cacheRegister
 
 		//先装载系统配置文件
 		if (empty(self::$_config)) {
-			self::getConfig();
+			self::$_config = KF::getConfig();
 		}
 		$redis = @self::$_redis_pool[$store_name];
 		if (empty($redis)) {
-			$redis_servers = self::$_config->redis_servers[$store_name];
+			$redis_servers = self::$_config->redis[$store_name];
 			if (empty($redis_servers)) {
 				throw new KF_Exception("Can't find configure of (" . $store_name . ") redis servers !");
 			}
@@ -59,7 +60,7 @@ class cacheRegister
 				}
 				if (!$ok) {
 
-					// throw new KF_ConfigException("Can't connect to (".$store_name.") any Redis Servers !");
+					throw new KF_Exception("Can't connect to (".$store_name.") any Redis Servers !");
 
 
 				}
