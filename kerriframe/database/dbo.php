@@ -3,6 +3,7 @@ class KF_DATABASE_record
 {
 	protected $_result = null;
 	protected $stmt = null;
+	public $column = false;
 	function __construct($stmt = false) {
 		$this->stmt = $stmt;
 	}
@@ -43,8 +44,12 @@ class KF_DATABASE_record
 		}
 	}
 
-	public function column($column) {
+	public function column($column = false) {
 		if ($this->stmt === false) return false;
+		if(!$column) {
+			if(!$this->column) return false;
+			$column = $this->column;
+		}
 
 		$ret = array();
 		while (($result = $this->stmt->fetchObject())) {
@@ -163,7 +168,19 @@ class KF_DBO extends KF_DATABASE_activerecord
 		}
 
 		$record = new KF_DATABASE_record($stmt);
+		if(count($this->ar_select) == 1) {
+			if($this->ar_select[0] != '*') {
+				$record->column = $this->ar_select[0];
+			}
+		}
 		return $record;
+	}
+
+	function quote($str) {
+		if (!$this->pdo) {
+			$this->_init();
+		}
+		return $this->pdo->quote($str);
 	}
 
 	function is_write_type($sql) {
