@@ -99,5 +99,9 @@ class cacheRegister
 		}
 		return self::$_memcache_pool[$store_name];
 	}
+
+	public static function &dummy() {
+		return new stdClass();
+	}
 }
 
