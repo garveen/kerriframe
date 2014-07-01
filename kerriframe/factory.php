@@ -200,7 +200,7 @@ class KF_Factory
 	 * Shortcut of self::load
 	 * @param  string $name
 	 */
-	public static function load_once($name) {
+	public static function loadOnce($name) {
 		static $cache = [];
 		if(isset($cache[$name])) {
 			return true;

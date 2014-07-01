@@ -53,6 +53,11 @@ $db = KF::getDB();
  */
 $query = $db->query($sql);
 
+//
+// 或者
+// 参见 http://codeigniter.org.cn/user_guide/database/active_record.html
+$query = $db->where('id', 1)->get('table');
+
 // 简单变量
 $query->one();
 // object
