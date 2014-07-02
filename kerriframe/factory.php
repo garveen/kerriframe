@@ -1,4 +1,28 @@
 <?php
+/**
+ * Class and Function List:
+ * Function list:
+ * - __construct()
+ * - init()
+ * - &getConfig()
+ * - load()
+ * - singleton()
+ * - loadOnce()
+ * - getCache()
+ * - &getDB()
+ * - &pingDB()
+ * - registry()
+ * - getRegistry()
+ * - &getController()
+ * - &getModel()
+ * - __callStatic()
+ * - &getMailer()
+ * - getSnsClient()
+ * - initApp()
+ * - raise()
+ * Classes list:
+ * - KF_Factory
+ */
 define("STORE_DEFAULT_NAME", "main");
 
 /**
@@ -10,6 +34,7 @@ class KF_Factory
 	protected static $_POST;
 
 	protected static $_security;
+
 	/**
 	 * singleton
 	 */
@@ -39,51 +64,10 @@ class KF_Factory
 		}
 	}
 
-
 	private static $_config = null;
 	private static $_mailer = null;
 	private static $_user = null;
 	private static $_sys_config = null;
-
-	/**
-	 * Fetch an item from the GET array
-	 * @param  string   $name
-	 * @param  boolean $xss_clean
-	 */
-	public static function get($name = null, $xss_clean = false) {
-		if($name === null) {
-			$ret = self::$_GET;
-		} elseif (isset(self::$_GET[$name])) {
-			$ret = self::$_GET[$name];
-		} else {
-			return false;
-		}
-
-		if($xss_clean) {
-			$ret = self::$_security->xss_clean($ret);
-		}
-		return $ret;
-	}
-
-	/**
-	 * Fetch an item from the POST array
-	 * @param  string  $name
-	 * @param  boolean $xss_clean
-	 */
-	public static function post($name = null, $xss_clean = false) {
-		if($name === null) {
-			$ret = self::$_POST;
-		} elseif (isset(self::$_POST[$name])) {
-			$ret = self::$_POST[$name];
-		} else {
-			return false;
-		}
-
-		if($xss_clean) {
-			$ret = self::$_security->xss_clean($ret);
-		}
-		return $ret;
-	}
 
 	/**
 	 * Get the config instance, loaded from KF_APP_PATH/config.php
@@ -99,7 +83,7 @@ class KF_Factory
 				self::$_config->$k = $v;
 			}
 		}
-		if($name === null) {
+		if ($name === null) {
 			return self::$_config;
 		} else {
 			return self::$_config->$name;
@@ -112,7 +96,7 @@ class KF_Factory
 	 * @param  boolean $once
 	 */
 	public static function load($name, $once = false) {
-		if(is_file($filename = KF_PATH . $name . '.php') || is_file($filename = KF_APP_PATH . $name . '.php')) {
+		if (is_file($filename = KF_PATH . $name . '.php') || is_file($filename = KF_APP_PATH . $name . '.php')) {
 			if ($once) {
 				require_once ($filename);
 			} else {
@@ -120,7 +104,6 @@ class KF_Factory
 			}
 		} else {
 			throw new KF_Exception("File Not Found");
-
 		}
 		if (is_file(KF_APP_PATH . 'core/' . $name . '.php')) {
 			if ($once) {
@@ -159,17 +142,17 @@ class KF_Factory
 		}
 		$path = '';
 		do {
-			$path .= array_shift($pathArr);
+			$path.= array_shift($pathArr);
 			$filename = $base_path . $path . '.php';
 			if (is_file($filename)) {
 				$storeName = str_replace('/', '_', $path);
-				if($core && is_file(KF_APP_PATH . 'core/' . $path . '.php')) {
+				if ($core && is_file(KF_APP_PATH . 'core/' . $path . '.php')) {
 					require (KF_APP_PATH . 'core/' . $path . '.php');
 					$className = KF::getConfig('class_prefix') . $storeName;
 				} else {
 					$className = 'KF_' . $storeName;
 				}
-				if(!class_exists($className)) {
+				if (!class_exists($className)) {
 					require ($filename);
 				}
 
@@ -180,17 +163,14 @@ class KF_Factory
 
 				if (method_exists($obj, 'init')) {
 					if ($params === null) $params = array();
-					call_user_func_array([
-						$obj,
-						'init'
-					] , $params);
+					call_user_func_array([$obj, 'init'] , $params);
 				}
 
 				self::$_registry[$storeName] = $obj;
 				return $obj;
 			}
 
-			$path .= '/';
+			$path.= '/';
 		}
 		while (!empty($pathArr));
 		throw new KF_Exception("Class {$name} Not Found ");
@@ -202,7 +182,7 @@ class KF_Factory
 	 */
 	public static function loadOnce($name) {
 		static $cache = [];
-		if(isset($cache[$name])) {
+		if (isset($cache[$name])) {
 			return true;
 		} else {
 			$cache[$name] = true;
@@ -317,11 +297,11 @@ class KF_Factory
 	}
 
 	public static function __callStatic($name, $args) {
-		if(substr($name, 0, 3) == 'get') {
+		if (substr($name, 0, 3) == 'get') {
 			$className = strtolower(substr($name, 3) . '/' . $args[0]);
 			return self::singleton($className, null, false, false);
 		} else {
-			self::raise(new KF_Exception("Undefined method KF::{$name}"), 500);
+			self::raise(new KF_Exception("Undefined method KF::{$name}") , 500);
 		}
 	}
 
@@ -381,6 +361,8 @@ class KF_Factory
 	// 	return $yarClient;
 	// }
 
+
+
 	/**
 	 * skeleton generator
 	 * @param  string $dirname User space's dir name
@@ -396,14 +378,14 @@ class KF_Factory
 	 * @param  int        http_status http status code
 	 */
 	public static function raise($e, $http_status = 404) {
-		if(KF::getConfig('environment') == 'debug') {
+		if (KF::getConfig('environment') == 'debug') {
 			throw $e;
 		}
-		if($e instanceof Exception) {
+		if ($e instanceof Exception) {
 			KF::log($e, 'error');
 		}
 		$routes = KF::getConfig('routes');
-		if(isset($routes[$http_status . '_override']) && $routes[$http_status . '_override'] != '') {
+		if (isset($routes[$http_status . '_override']) && $routes[$http_status . '_override'] != '') {
 			$application = KF::singleton('application');
 			$application->dispatch($routes[$http_status . '_override']);
 			exit;
@@ -412,9 +394,7 @@ class KF_Factory
 			echo '<h1>Something Wrong</h1>';
 			exit;
 		}
-
 	}
-
 }
 
 /* End of file */
