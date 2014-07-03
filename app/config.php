@@ -47,5 +47,10 @@ $config = [
 	] ,
 
 	'class_prefix' => 'MY_',
+
+	'cookie' => [
+		'path' => '/',
+		'domain' => '',
+	],
 ];
 

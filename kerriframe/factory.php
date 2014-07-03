@@ -30,9 +30,6 @@ define("STORE_DEFAULT_NAME", "main");
  */
 class KF_Factory
 {
-	protected static $_GET;
-	protected static $_POST;
-
 	protected static $_security;
 
 	/**
@@ -52,16 +49,6 @@ class KF_Factory
 		self::load('database/dbo');
 
 		self::$_security = self::singleton('library/security');
-
-		$config = self::getConfig();
-
-		self::$_GET = $_GET;
-		self::$_POST = $_POST;
-
-		if ($config->unset_GET_POST) {
-			unset($_GET);
-			unset($_POST);
-		}
 	}
 
 	private static $_config = null;

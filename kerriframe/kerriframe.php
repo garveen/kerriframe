@@ -3,12 +3,16 @@
  * Class and Function List:
  * Function list:
  * - __construct()
+ * - init()
  * - log()
  * - header()
  * - baseUrl()
  * - siteUrl()
  * - get()
  * - post()
+ * - cookie()
+ * - setcookie()
+ * - input()
  * - getClientIP()
  * Classes list:
  * - KF extends KF_Factory
@@ -23,6 +27,26 @@ class KF extends KF_Factory
 	}
 
 	private static $ip = false;
+
+	protected static $_GET;
+	protected static $_POST;
+	protected static $_COOKIE;
+
+	public static function init() {
+		parent::init();
+
+		$config = self::getConfig();
+
+		self::$_GET = $_GET;
+		self::$_POST = $_POST;
+		self::$_COOKIE = $_COOKIE;
+
+		if ($config->unset_GET_POST) {
+			unset($_GET);
+			unset($_POST);
+			unset($_COOKIE);
+		}
+	}
 
 	protected static $_logger = false;
 	public static function log($message, $level = 'info') {
@@ -51,18 +75,7 @@ class KF extends KF_Factory
 	 * @param  boolean $xss_clean
 	 */
 	public static function get($name = null, $xss_clean = false) {
-		if ($name === null) {
-			$ret = self::$_GET;
-		} elseif (isset(self::$_GET[$name])) {
-			$ret = self::$_GET[$name];
-		} else {
-			return false;
-		}
-
-		if ($xss_clean) {
-			$ret = self::$_security->xss_clean($ret);
-		}
-		return $ret;
+		return self::input($name, $xss_clean, '_GET');
 	}
 
 	/**
@@ -71,10 +84,25 @@ class KF extends KF_Factory
 	 * @param  boolean $xss_clean
 	 */
 	public static function post($name = null, $xss_clean = false) {
+		return self::input($name, $xss_clean, '_POST');
+	}
+
+	public static function cookie($name = null, $xss_clean = false) {
+		return self::input($name, $xss_clean, '_COOKIE');
+	}
+
+	public static function setcookie($name, $value, $expire = 0) {
+		$cookieConfig = KF::getConfig('cookie');
+		$domain = $cookieConfig['domain'];
+		setcookie($name, $value, $expire, $cookieConfig['path'] , $cookieConfig['domain']);
+	}
+
+	protected static function input($name, $xss_clean, $type) {
+		$arr = self::$$type;
 		if ($name === null) {
-			$ret = self::$_POST;
-		} elseif (isset(self::$_POST[$name])) {
-			$ret = self::$_POST[$name];
+			$ret = $arr;
+		} elseif (isset($arr[$name])) {
+			$ret = $arr[$name];
 		} else {
 			return false;
 		}
