@@ -233,8 +233,8 @@ class KF_Factory
 
 	public static function __callStatic($name, $args) {
 		if (substr($name, 0, 3) == 'get') {
-			$className = strtolower(substr($name, 3) . '/' . $args[0]);
-			return self::singleton($className, null, false, false);
+			$className = strtolower(substr($name, 3) . '/' . array_shift($args));
+			return self::singleton($className, $args, false, false);
 		} else {
 			self::raise(new KF_Exception("Undefined method KF::{$name}") , 500);
 		}

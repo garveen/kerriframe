@@ -38,14 +38,6 @@ class KF_Response
 		return self::$body;
 	}
 
-	public function addHtmlHeader($value) {
-		self::$html_headers[] = $value;
-	}
-
-	public function getHtmlHeader() {
-		return self::$content;
-	}
-
 	public function outputContent() {
 		echo self::$body;
 	}
@@ -53,5 +45,9 @@ class KF_Response
 	public function flush() {
 		self::outputHeader();
 		self::outputContent();
+	}
+
+	public function clean() {
+		self::$body = '';
 	}
 }

@@ -71,6 +71,11 @@ class KF extends KF_Factory
 		return parent::singleton('router')->site_url($uri);
 	}
 
+	public static function renderWidget($name, $params = array(), $template = 'index') {
+		$widget = self::getWidget($name, $params);
+		$widget->display($template);
+	}
+
 	/**
 	 * Fetch an item from the GET array
 	 * @param  string   $name

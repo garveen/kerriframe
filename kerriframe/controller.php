@@ -27,8 +27,7 @@ abstract class KF_Controller
 		ob_start();
 		$fileName = KF_APP_PATH . 'view/' . $action_template . '.php';
 		if (is_file($fileName)) {
-			extract($vars);
-			require ($fileName);
+			$this->__display($fileName, $vars);
 		} else {
 			throw new KF_Exception("View {$action_template} Not Found", 1);
 		}
@@ -39,6 +38,11 @@ abstract class KF_Controller
 		} else {
 			KF::singleton('response')->setContent(ob_get_clean());
 		}
+	}
+
+	final private function __display($fileName, $vars) {
+		extract($vars);
+		require ($fileName);
 	}
 
 	public function redirect($link, $message = null) {

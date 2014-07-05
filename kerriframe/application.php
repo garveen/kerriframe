@@ -1,4 +1,13 @@
 <?php
+/**
+* Class and Function List:
+* Function list:
+* - run()
+* - dispatch()
+* - callAction()
+* Classes list:
+* - KF_Application
+*/
 class KF_Application
 {
 	public function run() {
@@ -9,8 +18,6 @@ class KF_Application
 		}
 
 		$this->dispatch();
-
-
 	}
 
 	public function dispatch($uri = '') {
@@ -18,7 +25,7 @@ class KF_Application
 		$router = KF::singleton('router');
 		$router->route($uri);
 
-		if(!$router->request) {
+		if (!$router->request) {
 			KF::raise('router not init', 500);
 		}
 
@@ -35,7 +42,7 @@ class KF_Application
 			$action = 'index';
 		}
 		$controller->__action = $action;
-		if(method_exists($controller, '__preAction')) {
+		if (method_exists($controller, '__preAction')) {
 			$controller->__preAction();
 		}
 		$callVar = array(
@@ -43,26 +50,28 @@ class KF_Application
 			$action
 		);
 
-		if(!is_callable($callVar)) {
+		if (!is_callable($callVar)) {
 			KF::raise(new KF_Exception("Cannot call controller method"));
 		}
+		ob_start();
 		try {
 			$this->callAction($callVar, $request);
-		} catch(Exception $e) {
+		}
+		catch(Exception $e) {
 			KF::raise($e, 500);
 		}
-
+		ob_end_flush();
 
 		KF::singleton('response')->flush();
 	}
 
 	public function callAction($callVar, $request) {
+
 		// load the class
 		$response = KF::singleton('response');
 		ob_start();
 		call_user_func_array($callVar, $request);
 		$content = ob_get_clean();
 		$response->setContent($content);
-
 	}
 }
