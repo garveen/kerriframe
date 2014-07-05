@@ -1,66 +1,23 @@
 <?php
-class KF_DATABASE_record
-{
-	protected $_result = null;
-	protected $stmt = null;
-	public $column = false;
-	function __construct($stmt = false) {
-		$this->stmt = $stmt;
-	}
-
-	public function one() {
-
-		if ($this->stmt === false) return false;
-
-		$result = $this->stmt->fetchColumn(0);
-
-		return $result;
-	}
-
-	public function row() {
-
-		if ($this->stmt === false) return false;
-
-		$result = $this->stmt->fetchObject();
-
-		return $result;
-	}
-
-	public function result($key_column = null) {
-
-		if ($this->stmt === false) return false;
-
-		if ($key_column === null) {
-			$result = $this->stmt->fetchAll(PDO::FETCH_OBJ);
-			$this->stmt->closeCursor();
-
-			return $result;
-		} else {
-			$ret = array();
-			while (($result = $this->stmt->fetchObject())) {
-				$ret[$result->$key_column] = $result;
-			}
-			return $ret;
-		}
-	}
-
-	public function column($column = false) {
-		if ($this->stmt === false) return false;
-		if(!$column) {
-			if(!$this->column) return false;
-			$column = $this->column;
-		}
-
-		$ret = array();
-		while (($result = $this->stmt->fetchObject())) {
-			$ret[] = $result->$column;
-		}
-		return $ret;
-
-	}
-}
-
-class KF_DBO extends KF_DATABASE_activerecord
+/**
+ * Class and Function List:
+ * Function list:
+ * - __call()
+ * - __construct()
+ * - _init()
+ * - prepare()
+ * - query()
+ * - quote()
+ * - is_write_type()
+ * - lastInsertId()
+ * - replacePrefix()
+ * - getQueries()
+ * - getErrorMsg()
+ * - ping()
+ * Classes list:
+ * - KF_Database_Dbo extends KF_Database_activerecord
+ */
+class KF_Database_Dbo extends KF_Database_activerecord
 {
 	public static $qeuries = array();
 	public $name;
@@ -80,8 +37,9 @@ class KF_DBO extends KF_DATABASE_activerecord
 
 		$this->trans_enabled = FALSE;
 
-		$this->_random_keyword = ' RND('.time().')'; // database specific random keyword
+		$this->_random_keyword = ' RND(' . time() . ')';
 
+		// database specific random keyword
 
 		if ($options === null) {
 			$options = array(
@@ -105,7 +63,6 @@ class KF_DBO extends KF_DATABASE_activerecord
 
 		// 设置错误报告模式 如果执行失败且不在debug模式，将捕获并写log
 		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 	}
 
 	public function prepare($sql, $driver_options = array()) {
@@ -124,12 +81,14 @@ class KF_DBO extends KF_DATABASE_activerecord
 			$this->_init();
 		}
 
-		if(is_object($params)) {
+		if (is_object($params)) {
 			$params = (array)$params;
 		}
 
-		if(!is_array($params)) {
-			$params = [$params];
+		if (!is_array($params)) {
+			$params = [
+				$params
+			];
 		}
 
 		$sql_after_render = $this->replacePrefix($sql);
@@ -162,14 +121,13 @@ class KF_DBO extends KF_DATABASE_activerecord
 			$params
 		];
 
-		if ($this->is_write_type($sql))
-		{
+		if ($this->is_write_type($sql)) {
 			return TRUE;
 		}
 
 		$record = new KF_DATABASE_record($stmt);
-		if(count($this->ar_select) == 1) {
-			if($this->ar_select[0] != '*') {
+		if (count($this->ar_select) == 1) {
+			if ($this->ar_select[0] != '*') {
 				$record->column = $this->ar_select[0];
 			}
 		}
@@ -184,7 +142,7 @@ class KF_DBO extends KF_DATABASE_activerecord
 	}
 
 	function is_write_type($sql) {
-		if ( ! preg_match('/^\s*"?(SET|INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD DATA|COPY|ALTER|GRANT|REVOKE|LOCK|UNLOCK)\s/i', $sql)) {
+		if (!preg_match('/^\s*"?(SET|INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD DATA|COPY|ALTER|GRANT|REVOKE|LOCK|UNLOCK)\s/i', $sql)) {
 			return FALSE;
 		} else {
 			return TRUE;
@@ -192,7 +150,7 @@ class KF_DBO extends KF_DATABASE_activerecord
 	}
 
 	public function lastInsertId() {
-		if(!$this->pdo) return false;
+		if (!$this->pdo) return false;
 		return $this->pdo->lastInsertId();
 	}
 

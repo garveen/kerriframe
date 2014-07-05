@@ -1,5 +1,21 @@
 <?php
-class KF_Cache_Memcache implements KF_CacheManager
+/**
+* Class and Function List:
+* Function list:
+* - __construct()
+* - getInfo()
+* - get()
+* - set()
+* - add()
+* - increment()
+* - decrement()
+* - delete()
+* - replace()
+* - flush()
+* Classes list:
+* - KF_Cache_Memcache
+*/
+class KF_Cache_Memcache implements KF_Cache_Interface
 {
 	private $count = 0;
 	private $bytes = 0;
@@ -34,7 +50,7 @@ class KF_Cache_Memcache implements KF_CacheManager
 			$this->count++;
 			$this->bytes += strlen(serialize($var));
 		}
-		return $this->_memcache->set($key, serialize($var), $compress, $expire);
+		return $this->_memcache->set($key, serialize($var) , $compress, $expire);
 	}
 
 	public function add($key, $var, $compress = 0, $expire = 0) {

@@ -3,7 +3,7 @@
  * Thanks to CodeIgniter
  */
 
-class KF_DATABASE_activerecord {
+class KF_Database_activerecord {
 
 	var $ar_select				= array();
 	var $ar_distinct			= FALSE;

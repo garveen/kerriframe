@@ -1,15 +1,15 @@
 <?php
-interface KF_CacheManager {
-	public function get($key);
-	public function set($key, $var, $compress = 0, $expire = 0);
-	public function add($key, $var, $compress = 0, $expire = 0);
-	public function increment($key, $value = 1);
-	public function decrement($key, $value = 1);
-	public function delete($key, $timeout = 0);
-	public function replace($key, $var, $compress = 0, $expire = 0);
-	public function flush();
-}
-
+/**
+ * Class and Function List:
+ * Function list:
+ * - __construct()
+ * - singleton()
+ * - &redis()
+ * - &memcache()
+ * - &dummy()
+ * Classes list:
+ * - KF_Cache_Cache
+ */
 class KF_Cache_Cache
 {
 	private static $_config;
@@ -59,9 +59,7 @@ class KF_Cache_Cache
 				}
 				if (!$ok) {
 
-					throw new KF_Exception("Can't connect to (".$store_name.") any Redis Servers !");
-
-
+					throw new KF_Exception("Can't connect to (" . $store_name . ") any Redis Servers !");
 				}
 			}
 			self::$_redis_pool[$store_name] = $redis;

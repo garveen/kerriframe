@@ -3,7 +3,6 @@
  * Class and Function List:
  * Function list:
  * - __construct()
- * - init()
  * - autoload()
  * - &getConfig()
  * - singleton()
@@ -38,7 +37,7 @@ class KF_Factory
 	}
 
 	public static function autoload($name) {
-		$name = substr(strtr($name, '_', '/') , 3);
+		$name = strtolower(substr(strtr($name, '_', '/') , 3));
 
 		if (is_file($filename = KF_PATH . $name . '.php') || is_file($filename = KF_APP_PATH . $name . '.php')) {
 			require ($filename);
@@ -156,7 +155,7 @@ class KF_Factory
 		}
 
 		$db_config = self::getConfig()->database[$dbo_name];
-		$dbo = new KF_DBO($db_config['url'] , $db_config['user'] , $db_config['pass'] , isset($db_config['options']) ? $db_config['options'] : null);
+		$dbo = new KF_Database_Dbo($db_config['url'] , $db_config['user'] , $db_config['pass'] , isset($db_config['options']) ? $db_config['options'] : null);
 		$dbo->name = $dbo_name;
 
 		self::$_database_connection_pool[$dbo_name] = $dbo;
@@ -295,6 +294,7 @@ class KF_Factory
 	// 	self::$yarClients[$rpc_name] = $yarClient;
 	// 	return $yarClient;
 	// }
+
 
 
 

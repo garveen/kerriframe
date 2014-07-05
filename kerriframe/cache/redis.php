@@ -1,5 +1,22 @@
 <?php
-class KF_Cache_Redis implements KF_CacheManager {
+/**
+* Class and Function List:
+* Function list:
+* - __construct()
+* - get()
+* - set()
+* - add()
+* - increment()
+* - decrement()
+* - delete()
+* - replace()
+* - flush()
+* - __call()
+* Classes list:
+* - KF_Cache_Redis
+*/
+class KF_Cache_Redis implements KF_Cache_Interface
+{
 	public function __construct($ins) {
 		$this->ins = $ins;
 	}
