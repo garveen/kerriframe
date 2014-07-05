@@ -10,7 +10,7 @@ interface KF_CacheManager {
 	public function flush();
 }
 
-class cacheRegister
+class KF_Cache_Cache
 {
 	private static $_config;
 	private function __construct() {
@@ -19,8 +19,7 @@ class cacheRegister
 	public static function singleton($handler, $store) {
 		if (!isset(self::$_pool[$handler][$store])) {
 			$ins = self::$handler($store);
-			KF::loadOnce("cache/{$handler}");
-			$className = "KF_{$handler}CacheManager";
+			$className = "KF_Cache_{$handler}";
 			self::$_pool[$handler][$store] = new $className($ins);
 		}
 		return self::$_pool[$handler][$store];

@@ -1,5 +1,5 @@
 <?php
-class KF_RedisCacheManager implements KF_CacheManager {
+class KF_Cache_Redis implements KF_CacheManager {
 	public function __construct($ins) {
 		$this->ins = $ins;
 	}

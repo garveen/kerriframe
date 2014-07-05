@@ -31,9 +31,11 @@ class KF extends KF_Factory
 	protected static $_GET;
 	protected static $_POST;
 	protected static $_COOKIE;
+	protected static $_security;
 
 	public static function init() {
-		parent::init();
+		spl_autoload_register(['KF', 'autoload']);
+		self::$_security = self::singleton('library/security');
 
 		$config = self::getConfig();
 

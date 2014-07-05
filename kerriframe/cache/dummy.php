@@ -1,6 +1,6 @@
 <?php
 
-class KF_DummyCacheManager implements KF_CacheManager
+class KF_Cache_Dummy implements KF_CacheManager
 {
   public function get( $key )
   {

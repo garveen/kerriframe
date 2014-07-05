@@ -1,4 +1,12 @@
 <?php
+/**
+* Class and Function List:
+* Function list:
+* - is_email()
+* - is_telephone()
+* - get_ip()
+* Classes list:
+*/
 function is_email($email) {
 	if (defined('FILTER_VALIDATE_EMAIL')) {
 		return filter_var($email, FILTER_VALIDATE_EMAIL);

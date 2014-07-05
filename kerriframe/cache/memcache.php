@@ -1,5 +1,5 @@
 <?php
-class KF_MemcacheCacheManager implements KF_CacheManager
+class KF_Cache_Memcache implements KF_CacheManager
 {
 	private $count = 0;
 	private $bytes = 0;
@@ -25,7 +25,7 @@ class KF_MemcacheCacheManager implements KF_CacheManager
 			$this->count++;
 			$this->bytes += strlen(serialize($ret));
 		}
-		return $ret;
+		return unserialize($ret);
 	}
 
 	public function set($key, $var, $compress = 0, $expire = 86400) {
@@ -34,7 +34,7 @@ class KF_MemcacheCacheManager implements KF_CacheManager
 			$this->count++;
 			$this->bytes += strlen(serialize($var));
 		}
-		return $this->_memcache->set($key, $var, $compress, $expire);
+		return $this->_memcache->set($key, serialize($var), $compress, $expire);
 	}
 
 	public function add($key, $var, $compress = 0, $expire = 0) {

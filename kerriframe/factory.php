@@ -4,10 +4,9 @@
  * Function list:
  * - __construct()
  * - init()
+ * - autoload()
  * - &getConfig()
- * - load()
  * - singleton()
- * - loadOnce()
  * - getCache()
  * - &getDB()
  * - &pingDB()
@@ -38,17 +37,15 @@ class KF_Factory
 	private function __construct() {
 	}
 
-	public static function init() {
+	public static function autoload($name) {
+		$name = substr(strtr($name, '_', '/') , 3);
 
-		self::load('exception');
-		self::load('controller');
-		self::load('model');
-		self::load('functions');
-
-		self::load('database/activerecord');
-		self::load('database/dbo');
-
-		self::$_security = self::singleton('library/security');
+		if (is_file($filename = KF_PATH . $name . '.php') || is_file($filename = KF_APP_PATH . $name . '.php')) {
+			require ($filename);
+		}
+		if (is_file(KF_APP_PATH . 'core/' . $name . '.php')) {
+			require (KF_APP_PATH . 'core/' . $name . '.php');
+		}
 	}
 
 	private static $_config = null;
@@ -63,7 +60,6 @@ class KF_Factory
 	 */
 	public static function &getConfig($name = null) {
 		if (self::$_config == null) {
-			self::load('config');
 			self::$_config = new KF_Config;
 			require (KF_APP_PATH . 'config.php');
 			foreach ($config as $k => $v) {
@@ -74,30 +70,6 @@ class KF_Factory
 			return self::$_config;
 		} else {
 			return self::$_config->$name;
-		}
-	}
-
-	/**
-	 * Load a php file, either from Kerriframe, or user space.
-	 * @param  string  $name
-	 * @param  boolean $once
-	 */
-	public static function load($name, $once = false) {
-		if (is_file($filename = KF_PATH . $name . '.php') || is_file($filename = KF_APP_PATH . $name . '.php')) {
-			if ($once) {
-				require_once ($filename);
-			} else {
-				require ($filename);
-			}
-		} else {
-			throw new KF_Exception("File Not Found");
-		}
-		if (is_file(KF_APP_PATH . 'core/' . $name . '.php')) {
-			if ($once) {
-				require_once (KF_APP_PATH . 'core/' . $name . '.php');
-			} else {
-				require (KF_APP_PATH . 'core/' . $name . '.php');
-			}
 		}
 	}
 
@@ -129,18 +101,14 @@ class KF_Factory
 		}
 		$path = '';
 		do {
-			$path.= array_shift($pathArr);
+			$path .= array_shift($pathArr);
 			$filename = $base_path . $path . '.php';
 			if (is_file($filename)) {
 				$storeName = str_replace('/', '_', $path);
 				if ($core && is_file(KF_APP_PATH . 'core/' . $path . '.php')) {
-					require (KF_APP_PATH . 'core/' . $path . '.php');
 					$className = KF::getConfig('class_prefix') . $storeName;
 				} else {
 					$className = 'KF_' . $storeName;
-				}
-				if (!class_exists($className)) {
-					require ($filename);
 				}
 
 				$obj = new $className;
@@ -157,27 +125,11 @@ class KF_Factory
 				return $obj;
 			}
 
-			$path.= '/';
+			$path .= '/';
 		}
 		while (!empty($pathArr));
 		throw new KF_Exception("Class {$name} Not Found ");
 	}
-
-	/**
-	 * Shortcut of self::load
-	 * @param  string $name
-	 */
-	public static function loadOnce($name) {
-		static $cache = [];
-		if (isset($cache[$name])) {
-			return true;
-		} else {
-			$cache[$name] = true;
-		}
-		return self::load($name, true);
-	}
-
-	protected static $_cache_init = false;
 
 	/**
 	 * Get a cache singleton
@@ -185,11 +137,7 @@ class KF_Factory
 	 * @param  string $store   store name
 	 */
 	public static function getCache($handler = 'memcache', $store = STORE_DEFAULT_NAME) {
-		if (!self::$_cache_init) {
-			self::loadOnce('cache/cache');
-			self::$_cache_init = true;
-		}
-		return cacheRegister::singleton($handler, $store);
+		return KF_Cache_Cache::singleton($handler, $store);
 	}
 
 	private static $_database_connection_pool = array();
