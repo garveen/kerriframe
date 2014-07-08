@@ -70,7 +70,7 @@ class KF_Database_Dbo extends KF_Database_activerecord
 			$this->_init();
 		}
 		$sql_after_render = $this->replacePrefix($sql);
-		KF_DBO::$qeuries[] = $sql_after_render;
+		self::$qeuries[] = $sql_after_render;
 		return $this->pdo->prepare($sql_after_render, $driver_options);
 	}
 
@@ -104,7 +104,7 @@ class KF_Database_Dbo extends KF_Database_activerecord
 			if ($this->debug) {
 				throw $e;
 			} else {
-				KF_DBO::$qeuries[] = [
+				self::$qeuries[] = [
 					$sql_after_render,
 					$params
 				];
@@ -116,7 +116,7 @@ class KF_Database_Dbo extends KF_Database_activerecord
 				return false;
 			}
 		}
-		KF_DBO::$qeuries[] = [
+		self::$qeuries[] = [
 			$stmt->queryString,
 			$params
 		];
@@ -226,7 +226,7 @@ class KF_Database_Dbo extends KF_Database_activerecord
 	}
 
 	public function getQueries() {
-		return KF_DBO::$qeuries;
+		return self::$qeuries;
 	}
 
 	public function getErrorMsg() {
