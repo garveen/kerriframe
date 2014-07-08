@@ -34,6 +34,8 @@ class KF_Router
 			}
 			$base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']) , '', $_SERVER['SCRIPT_NAME']);
 
+			$base_url = rtrim($base_url, '/');
+
 			$this->http_host = $base_url;
 		}
 		foreach ($this->_routes as $route) {
@@ -53,14 +55,14 @@ class KF_Router
 	}
 
 	public function base_url($uri = '', $host = false) {
-		if($host === false) {
-			$host = KF::getConfig('default_host');
-		}
-		if($host) {
-			$host = "{$host}.";
+		$hosts = KF::getConfig('host_map');
+		if(isset($hosts[$host])) {
+			$host = $hosts[$host];
+		} else {
+			$host = $this->http_host;
 		}
 
-		return "{$this->protocol}://{$host}{$this->http_host}{$uri}";
+		return "{$this->protocol}://{$host}/{$uri}";
 	}
 
 	public function site_url($uri = '', $host = false) {

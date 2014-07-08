@@ -5,19 +5,11 @@ $config = [
 
 	'index_page' => 'index.php',
 
-
-	/**
-	 * If use multi-sub-domains, split your domain into these two configs
-	 * Example: main domain is www.example.com
-	 *        and you want to use image.example.com
-	 *        then config:
-	 *             base_url     : example.com
-	 *             default_host : www
-	 */
-
 	'base_url' => '',
 
-	'default_host' => '',
+	'host_map' => [
+		'example' => 'www.example.com',
+	],
 
 	/**
 	 * error, debug, info
