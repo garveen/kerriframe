@@ -98,7 +98,8 @@ class KF_Cache_Cache
 	}
 
 	public static function &dummy() {
-		return new stdClass();
+		$dummy = new stdClass();
+		return $dummy;
 	}
 }
 
