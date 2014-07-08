@@ -63,12 +63,12 @@ class KF extends KF_Factory
 		return parent::singleton('response')->header($k, $v);
 	}
 
-	public static function baseUrl($uri = '') {
-		return parent::singleton('router')->base_url($uri);
+	public static function baseUrl($uri = '', $host = false) {
+		return parent::singleton('router')->base_url($uri, $host);
 	}
 
-	public static function siteUrl($uri = '') {
-		return parent::singleton('router')->site_url($uri);
+	public static function siteUrl($uri = '', $host = false) {
+		return parent::singleton('router')->site_url($uri, $host);
 	}
 
 	public static function renderWidget($name, $params = array(), $template = 'index') {

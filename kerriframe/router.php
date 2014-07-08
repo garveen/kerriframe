@@ -1,15 +1,15 @@
 <?php
 /**
-* Class and Function List:
-* Function list:
-* - route()
-* - addRoute()
-* - base_url()
-* - site_url()
-* - _detect_uri()
-* Classes list:
-* - KF_Router
-*/
+ * Class and Function List:
+ * Function list:
+ * - route()
+ * - addRoute()
+ * - base_url()
+ * - site_url()
+ * - _detect_uri()
+ * Classes list:
+ * - KF_Router
+ */
 class KF_Router
 {
 
@@ -19,13 +19,23 @@ class KF_Router
 
 	public $base_url = '';
 	public $site_url = '';
+	public $http_host = '';
+	public $protocol = '';
 
 	public function route($uri = '') {
 		if (!$uri) {
 			$uri = $this->_detect_uri();
 		}
-		$this->base_url = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']) , '', $_SERVER['SCRIPT_NAME']) , '/');
-		$this->site_url = $this->base_url(KF::getConfig()->index_page);
+		if (isset($_SERVER['HTTP_HOST'])) {
+			$this->protocol = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
+			$base_url = KF::getConfig('base_url');
+			if (!$base_url) {
+				$base_url = preg_replace('#^' . preg_quote(KF::getConfig('default_host')) . '\.#', '', $_SERVER['HTTP_HOST']);
+			}
+			$base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']) , '', $_SERVER['SCRIPT_NAME']);
+
+			$this->http_host = $base_url;
+		}
 		foreach ($this->_routes as $route) {
 
 			if ($params = $route->match($uri)) {
@@ -42,12 +52,19 @@ class KF_Router
 		$this->_routes[] = new KF_Route($orig, $dest);
 	}
 
-	public function base_url($uri = '') {
-		return "{$this->base_url}/{$uri}";
+	public function base_url($uri = '', $host = false) {
+		if($host === false) {
+			$host = KF::getConfig('default_host');
+		}
+		if($host) {
+			$host = "{$host}.";
+		}
+
+		return "{$this->protocol}://{$host}{$this->http_host}{$uri}";
 	}
 
-	public function site_url($uri = '') {
-		return "{$this->site_url}/{$uri}";
+	public function site_url($uri = '', $host = false) {
+		return $this->base_url(KF::getConfig('index_page') . '/' . $uri, $host);
 	}
 
 	private function _detect_uri() {
