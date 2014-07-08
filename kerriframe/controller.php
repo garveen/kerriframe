@@ -41,6 +41,7 @@ abstract class KF_Controller
 	}
 
 	final private function __display($fileName, $vars) {
+		$vars = (array)$vars;
 		extract($vars);
 		require ($fileName);
 	}
