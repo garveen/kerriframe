@@ -29,6 +29,7 @@ abstract class KF_Widget
 	}
 
 	final private function __display($fileName, $vars) {
+		$vars = (array)$vars;
 		extract($vars);
 		require ($fileName);
 	}
