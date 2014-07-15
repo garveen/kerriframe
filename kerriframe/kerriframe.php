@@ -46,7 +46,6 @@ class KF extends KF_Factory
 		if ($config->unset_GET_POST) {
 			unset($_GET);
 			unset($_POST);
-			unset($_COOKIE);
 		}
 	}
 
@@ -148,6 +147,10 @@ class KF extends KF_Factory
 		unset($fip);
 
 		return self::$ip;
+	}
+
+	public static function loadSession() {
+		self::singleton('library/session');
 	}
 }
 

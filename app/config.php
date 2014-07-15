@@ -47,7 +47,13 @@ $config = [
 		'main' => [
 			[
 				'host' => 'cacheserver',
-				'port' => '11212',
+				'port' => '11211',
+			]
+		] ,
+		'session' => [
+			[
+				'host' => 'sessionserver',
+				'port' => '11211',
 			]
 		] ,
 	] ,
@@ -57,6 +63,13 @@ $config = [
 	'cookie' => [
 		'path' => '/',
 		'domain' => '',
-	],
+	] ,
+
+	'session' => [
+		'manager' => 'memcache',
+		'config' => [
+			'expire' => 1800,
+		] ,
+	] ,
 ];
 

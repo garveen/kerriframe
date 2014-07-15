@@ -1,26 +1,19 @@
 <?php
-
-class KF_Library_Session {
+/**
+* Class and Function List:
+* Function list:
+* - __construct()
+* Classes list:
+* - KF_Library_Session
+*/
+class KF_Library_Session
+{
 	public function __construct() {
-		session_start();
-	}
-	public function get($name = null) {
-		if($name === null) {
-			return $_SESSION;
-		} else {
-			return $_SESSION[$name];
+		$sessionConfig = KF::getConfig('session');
+		if (isset($sessionConfig['manager']) && $sessionConfig['manager'] && $sessionConfig['manager'] != 'default') {
+			$className = 'KF_Library_Session_' . $sessionConfig['manager'];
+			new $className($sessionConfig['config']);
 		}
-	}
-
-	public function set($name, $value) {
-		$_SESSION[$name] = $value;
-	}
-
-	public function set_flashdata($name, $value) {
-		$_SESSION['__KF_FLASHDATA'][$name] = $value;
-	}
-
-	public function flashdata($name) {
-		return isset($_SESSION['__KF_FLASHDATA'][$name]) ? $_SESSION['__KF_FLASHDATA'][$name] : false;
+		session_start();
 	}
 }
