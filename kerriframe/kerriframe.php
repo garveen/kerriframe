@@ -35,6 +35,8 @@ class KF extends KF_Factory
 
 	public static function init() {
 		spl_autoload_register(['KF', 'autoload']);
+		require(KF_PATH . 'functions.php');
+
 		self::$_security = self::singleton('library/security');
 
 		$config = self::getConfig();
