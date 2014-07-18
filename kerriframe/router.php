@@ -27,6 +27,12 @@ class KF_Router
 			$uri = $this->_detect_uri();
 		}
 		if (isset($_SERVER['HTTP_HOST'])) {
+			$subdomain = substr($_SERVER['HTTP_HOST'] , 0, strpos($_SERVER['HTTP_HOST'] , '.'));
+			$map = KF::getConfig('site_dir_map');
+			if (isset($map[$subdomain]) && $map[$subdomain]) {
+				$uri = "{$map[$subdomain] }/$uri";
+			}
+
 			$this->protocol = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
 			$base_url = KF::getConfig('base_url');
 			if (!$base_url) {
@@ -56,7 +62,7 @@ class KF_Router
 
 	public function base_url($uri = '', $host = false) {
 		$hosts = KF::getConfig('host_map');
-		if(isset($hosts[$host])) {
+		if (isset($hosts[$host])) {
 			$host = $hosts[$host];
 		} else {
 			$host = $this->http_host;

@@ -71,5 +71,10 @@ $config = [
 			'expire' => 1800,
 		] ,
 	] ,
+
+	'site_dir_map' => [
+		'www' => '',
+		'kerriframe' => 'gavin',
+	] ,
 ];
 
