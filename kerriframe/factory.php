@@ -297,7 +297,6 @@ class KF_Factory
 
 
 
-
 	/**
 	 * skeleton generator
 	 * @param  string $dirname User space's dir name
@@ -314,7 +313,7 @@ class KF_Factory
 	 */
 	public static function raise($e, $http_status = 404) {
 		if (KF::getConfig('environment') == 'debug') {
-			throw $e;
+			throw new Exception('Thrown by debug', 1, $e);
 		}
 		if ($e instanceof Exception) {
 			KF::log($e, 'error');
