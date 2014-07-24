@@ -30,7 +30,7 @@ class KF_Router
 			$subdomain = substr($_SERVER['HTTP_HOST'] , 0, strpos($_SERVER['HTTP_HOST'] , '.'));
 			$map = KF::getConfig('site_dir_map');
 			if (isset($map[$subdomain]) && $map[$subdomain]) {
-				$uri = "{$map[$subdomain] }/$uri";
+				$uri = rtrim("{$map[$subdomain]}/$uri", '/');
 			}
 
 			$this->protocol = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
