@@ -66,7 +66,7 @@ $config = [
 	] ,
 
 	'session' => [
-		'manager' => 'memcache',
+		'manager' => 'file',
 		'config' => [
 			'expire' => 1800,
 		] ,
