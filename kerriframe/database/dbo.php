@@ -41,13 +41,6 @@ class KF_Database_Dbo extends KF_Database_activerecord
 
 		// database specific random keyword
 
-		if ($options === null) {
-			$options = array(
-				PDO::ATTR_PERSISTENT => true
-			);
-		} else if (is_array($options)) {
-			$options[PDO::ATTR_PERSISTENT] = true;
-		}
 		$this->params = array(
 			'dsn' => $dsn,
 			'username' => $username,
