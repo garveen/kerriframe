@@ -1172,11 +1172,11 @@ class KF_Database_activerecord {
 
 			$table = $this->ar_from[0];
 		}
-
-		$sql = $this->_insert($this->_protect_identifiers($table, TRUE, NULL, FALSE), array_keys($this->ar_set), array_values($this->ar_set));
+		$ar_set = $this->ar_set;
+		$sql = $this->_insert($this->_protect_identifiers($table, TRUE, NULL, FALSE), array_keys($ar_set));
 
 		$this->_reset_write();
-		return $this->query($sql);
+		return $this->query($sql, $ar_set);
 	}
 
 	// --------------------------------------------------------------------
@@ -2488,9 +2488,9 @@ class KF_Database_activerecord {
 	 * @param	array	the insert values
 	 * @return	string
 	 */
-	function _insert($table, $keys, $values)
+	function _insert($table, $keys)
 	{
-		return "INSERT INTO ".$table." (".implode(', ', $keys).") VALUES (".implode(', ', $values).")";
+		return "INSERT INTO ".$table." (`".implode('`, `', $keys)."`) VALUES (:".implode(', :', $keys).")";
 	}
 
 	// --------------------------------------------------------------------
@@ -2508,7 +2508,7 @@ class KF_Database_activerecord {
 	 */
 	function _insert_batch($table, $keys, $values)
 	{
-		return "INSERT INTO ".$table." (".implode(', ', $keys).") VALUES ".implode(', ', $values);
+		return "INSERT INTO ".$table." (`".implode('`, `', $keys)."`) VALUES ".implode(', ', $values);
 	}
 
 	// --------------------------------------------------------------------
