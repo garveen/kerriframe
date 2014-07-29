@@ -43,6 +43,8 @@ $config = [
 		] ,
 	] ,
 
+	'cache_default_handler' => 'memcache',
+
 	'memcached' => [
 		'main' => [
 			[

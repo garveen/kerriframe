@@ -135,7 +135,7 @@ class KF_Factory
 	 * @param  string $handler
 	 * @param  string $store   store name
 	 */
-	public static function getCache($handler = 'memcache', $store = STORE_DEFAULT_NAME) {
+	public static function getCache($handler = CACHE_DEFAULT_HANDLER, $store = STORE_DEFAULT_NAME) {
 		return KF_Cache_Cache::singleton($handler, $store);
 	}
 
