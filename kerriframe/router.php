@@ -61,6 +61,7 @@ class KF_Router
 	}
 
 	public function base_url($uri = '', $host = false) {
+		$uri = ltrim($uri, '/');
 		$hosts = KF::getConfig('host_map');
 		if (isset($hosts[$host])) {
 			$host = $hosts[$host];
