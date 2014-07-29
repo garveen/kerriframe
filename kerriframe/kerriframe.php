@@ -41,6 +41,9 @@ class KF extends KF_Factory
 
 		$config = self::getConfig();
 
+		define('CACHE_DEFAULT_HANDLER', isset($config->cache_default_handler) ? $config->cache_default_handler : 'dummy');
+
+
 		self::$_GET = $_GET;
 		self::$_POST = $_POST;
 		self::$_COOKIE = $_COOKIE;
