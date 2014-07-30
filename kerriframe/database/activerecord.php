@@ -902,14 +902,7 @@ class KF_Database_activerecord {
 
 		foreach ($key as $k => $v)
 		{
-			if ($escape === FALSE)
-			{
-				$this->ar_set[$this->_protect_identifiers($k)] = $v;
-			}
-			else
-			{
-				$this->ar_set[$this->_protect_identifiers($k, FALSE, TRUE)] = $this->escape($v);
-			}
+			$this->ar_set[$this->_protect_identifiers($k, FALSE, TRUE)] = $v;
 		}
 
 		return $this;
@@ -946,37 +939,6 @@ class KF_Database_activerecord {
 		$result = $this->query($sql);
 		$this->_reset_select();
 		return $result;
-	}
-
-	/**
-	 * "Count All Results" query
-	 *
-	 * Generates a platform-specific query string that counts all records
-	 * returned by an Active Record query.
-	 *
-	 * @param	string
-	 * @return	string
-	 */
-	public function count_all_results($table = '')
-	{
-		if ($table != '')
-		{
-			$this->_track_aliases($table);
-			$this->from($table);
-		}
-
-		$sql = $this->_compile_select($this->_count_string . $this->_protect_identifiers('numrows'));
-
-		$query = $this->query($sql);
-		$this->_reset_select();
-
-		if ($query->num_rows() == 0)
-		{
-			return 0;
-		}
-
-		$row = $query->row();
-		return (int) $row->numrows;
 	}
 
 	// --------------------------------------------------------------------
@@ -1172,11 +1134,11 @@ class KF_Database_activerecord {
 
 			$table = $this->ar_from[0];
 		}
-		$ar_set = $this->ar_set;
-		$sql = $this->_insert($this->_protect_identifiers($table, TRUE, NULL, FALSE), array_keys($ar_set));
+		$sql = $this->_insert($this->_protect_identifiers($table, TRUE, NULL, FALSE), array_keys($this->ar_set));
 
+		$query = $this->query($sql, $this->ar_set);
 		$this->_reset_write();
-		return $this->query($sql, $ar_set);
+		return $query;
 	}
 
 	// --------------------------------------------------------------------
@@ -1220,10 +1182,11 @@ class KF_Database_activerecord {
 			$table = $this->ar_from[0];
 		}
 
-		$sql = $this->_replace($this->_protect_identifiers($table, TRUE, NULL, FALSE), array_keys($this->ar_set), array_values($this->ar_set));
+		$sql = $this->_replace($this->_protect_identifiers($table, TRUE, NULL, FALSE), array_keys($this->ar_set));
 
+		$query = $this->query($sql, $this->ar_set);
 		$this->_reset_write();
-		return $this->query($sql);
+		return $query;
 	}
 
 	// --------------------------------------------------------------------
@@ -1282,9 +1245,10 @@ class KF_Database_activerecord {
 		}
 
 		$sql = $this->_update($this->_protect_identifiers($table, TRUE, NULL, FALSE), $this->ar_set, $this->ar_where, $this->ar_orderby, $this->ar_limit);
+		$query = $this->query($sql, $this->ar_set);
 
 		$this->_reset_write();
-		return $this->query($sql);
+		return $query;
 	}
 
 
@@ -1302,6 +1266,8 @@ class KF_Database_activerecord {
 	 */
 	public function update_batch($table = '', $set = NULL, $index = NULL)
 	{
+		throw new KF_Exception("Not support yet", 500);
+
 		// Combine any cached components with the current statements
 		$this->_merge_cache();
 
@@ -2047,69 +2013,8 @@ class KF_Database_activerecord {
 
 	var $options = array();
 
-
-	/**
-	 * Non-persistent database connection
-	 *
-	 * @access	private called by the base class
-	 * @return	resource
-	 */
-	function db_connect()
-	{
-		$this->options['PDO::ATTR_ERRMODE'] = PDO::ERRMODE_SILENT;
-
-		return new PDO($this->hostname, $this->username, $this->password, $this->options);
-	}
-
 	// --------------------------------------------------------------------
 
-	/**
-	 * Persistent database connection
-	 *
-	 * @access	private called by the base class
-	 * @return	resource
-	 */
-	function db_pconnect()
-	{
-		$this->options['PDO::ATTR_ERRMODE'] = PDO::ERRMODE_SILENT;
-		$this->options['PDO::ATTR_PERSISTENT'] = TRUE;
-
-		return new PDO($this->hostname, $this->username, $this->password, $this->options);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Reconnect
-	 *
-	 * Keep / reestablish the db connection if no queries have been
-	 * sent for a length of time exceeding the server's idle timeout
-	 *
-	 * @access	public
-	 * @return	void
-	 */
-	function reconnect()
-	{
-		if ($this->db->db_debug)
-		{
-			return $this->db->display_error('db_unsuported_feature');
-		}
-		return FALSE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Select the database
-	 *
-	 * @access	private called by the base class
-	 * @return	resource
-	 */
-	function db_select()
-	{
-		// Not needed for PDO
-		return TRUE;
-	}
 
 	// --------------------------------------------------------------------
 
@@ -2493,6 +2398,10 @@ class KF_Database_activerecord {
 		return "INSERT INTO ".$table." (`".implode('`, `', $keys)."`) VALUES (:".implode(', :', $keys).")";
 	}
 
+	function _replace($table, $keys) {
+		return "REPLACE INTO ".$table." (`".implode('`, `', $keys)."`) VALUES (:".implode(', :', $keys).")";
+	}
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -2508,6 +2417,7 @@ class KF_Database_activerecord {
 	 */
 	function _insert_batch($table, $keys, $values)
 	{
+		array_map(array($this, 'escape'), $values);
 		return "INSERT INTO ".$table." (`".implode('`, `', $keys)."`) VALUES ".implode(', ', $values);
 	}
 
@@ -2530,7 +2440,7 @@ class KF_Database_activerecord {
 	{
 		foreach ($values as $key => $val)
 		{
-			$valstr[] = $key." = ".$val;
+			$valstr[] = $key." = :" . $key;
 		}
 
 		$limit = ( ! $limit) ? '' : ' LIMIT '.$limit;
