@@ -209,7 +209,7 @@ class KF_Factory
 			$controller = self::singleton("controller/{$name}", null, $dig, false);
 			return $controller;
 		}
-		catch(Exception $e) {
+		catch(KF_Exception $e) {
 			self::raise(new KF_Exception("Controller {$name} Not Found"));
 		}
 	}
@@ -225,7 +225,7 @@ class KF_Factory
 			$model = self::singleton("model/{$name}", null, false, false);
 			return $model;
 		}
-		catch(Exception $e) {
+		catch(KF_Exception $e) {
 			self::raise(new KF_Exception("Model {$name} Not Found"));
 		}
 	}
