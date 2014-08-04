@@ -11,7 +11,7 @@ abstract class KF_Widget
 {
 
 	public function display($action_template = null, $vars = array() , $returnOutput = false) {
-		$action_template = $this->__objectPath . '/' . $action_template;
+		$action_template = strtolower($this->__objectPath . '/' . $action_template);
 		ob_start();
 		$fileName = KF_APP_PATH . 'view/' . $action_template . '.php';
 		if (is_file($fileName)) {
