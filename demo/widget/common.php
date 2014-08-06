@@ -8,6 +8,9 @@
 */
 class KF_Widget_Common extends KF_Widget
 {
+	public $default = [
+		'message' => 'Let\'s rock!',
+	];
 	public function init($params = array()) {
 		$this->message = $params['message'];
 	}

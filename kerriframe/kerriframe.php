@@ -8,18 +8,20 @@
  * - header()
  * - baseUrl()
  * - siteUrl()
+ * - renderWidget()
  * - get()
  * - post()
  * - cookie()
  * - setcookie()
  * - input()
  * - getClientIP()
+ * - loadSession()
  * Classes list:
  * - KF extends KF_Factory
  */
 define('KF_PATH', __DIR__ . '/');
 
-require (KF_PATH . 'factory.php');
+require KF_PATH . 'factory.php';
 
 class KF extends KF_Factory
 {
@@ -35,14 +37,13 @@ class KF extends KF_Factory
 
 	public static function init() {
 		spl_autoload_register(['KF', 'autoload']);
-		require(KF_PATH . 'functions.php');
+		require KF_PATH . 'functions.php';
 
 		self::$_security = self::singleton('library/security');
 
 		$config = self::getConfig();
 
 		define('CACHE_DEFAULT_HANDLER', isset($config->cache_default_handler) ? $config->cache_default_handler : 'dummy');
-
 
 		self::$_GET = $_GET;
 		self::$_POST = $_POST;
@@ -75,8 +76,14 @@ class KF extends KF_Factory
 		return parent::singleton('router')->site_url($uri, $host);
 	}
 
-	public static function renderWidget($name, $params = array(), $template = 'index') {
-		$widget = self::getWidget($name, $params);
+	public static function renderWidget($name, $params = array() , $template = 'index') {
+		$widget = self::getWidget($name);
+		if (is_array($widget->default)) {
+			$params = array_merge($widget->default, $params);
+		}
+
+		// init manually
+		$widget->init($params);
 		$widget->display($template);
 	}
 

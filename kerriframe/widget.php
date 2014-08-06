@@ -1,12 +1,12 @@
 <?php
 /**
-* Class and Function List:
-* Function list:
-* - display()
-* - __display()
-* Classes list:
-* - KF_Widget
-*/
+ * Class and Function List:
+ * Function list:
+ * - display()
+ * - __display()
+ * Classes list:
+ * - KF_Widget
+ */
 abstract class KF_Widget
 {
 

@@ -13,6 +13,7 @@
  * - getRegistry()
  * - &getController()
  * - &getModel()
+ * - &getWidget()
  * - __callStatic()
  * - &getMailer()
  * - getSnsClient()
@@ -79,7 +80,7 @@ class KF_Factory
 	 * @param  boolean $dig    Dig the path
 	 * @param  boolean $core   Search class from Kerriframe or user space
 	 */
-	public static function singleton($name, $params = null, $dig = false, $core = true) {
+	public static function singleton($name, $params = null, $dig = false, $core = true, $init = true) {
 
 		$storeName = str_replace('/', '_', $name);
 		if (isset(self::$_registry[$storeName])) {
@@ -115,7 +116,7 @@ class KF_Factory
 				$obj->__objectName = $className;
 				$obj->__objectPath = $path;
 
-				if (method_exists($obj, 'init')) {
+				if ($init && method_exists($obj, 'init')) {
 					if ($params === null) $params = array();
 					call_user_func_array([$obj, 'init'] , $params);
 				}
@@ -228,6 +229,13 @@ class KF_Factory
 		catch(KF_Exception $e) {
 			self::raise(new KF_Exception("Model {$name} Not Found"));
 		}
+	}
+
+	public static function &getWidget($name) {
+
+		// do not init now
+		$widget = self::singleton("widget/{$name}", null, false, false, false);
+		return $widget;
 	}
 
 	public static function __callStatic($name, $args) {
