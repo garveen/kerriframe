@@ -1,5 +1,5 @@
 <?php
-define('KF_APP_PATH', __DIR__ . '/app/');
+define('KF_APP_PATH', __DIR__ . '/demo/');
 
 require ('kerriframe/kerriframe.php');
 
