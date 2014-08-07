@@ -9,6 +9,7 @@
  */
 abstract class KF_Widget
 {
+	public $default = [];
 
 	public function display($action_template = null, $vars = array() , $returnOutput = false) {
 		$action_template = strtolower($this->__objectPath . '/' . $action_template);
