@@ -1998,7 +1998,7 @@ class KF_Database_activerecord {
 	var $dbdriver = 'pdo';
 
 	// the character used to excape - not necessary for PDO
-	var $_escape_char = '';
+	var $_escape_char = '`';
 	var $_like_escape_str;
 	var $_like_escape_chr;
 
