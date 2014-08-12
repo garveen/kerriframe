@@ -82,6 +82,7 @@ class KF_Factory
 	 */
 	public static function singleton($name, $params = null, $dig = false, $core = true, $init = true) {
 
+		$name = strtolower($name);
 		$storeName = str_replace('/', '_', $name);
 		if (isset(self::$_registry[$storeName])) {
 			return self::$_registry[$storeName];
