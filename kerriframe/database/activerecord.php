@@ -902,7 +902,7 @@ class KF_Database_activerecord {
 
 		foreach ($key as $k => $v)
 		{
-			$this->ar_set[$this->_protect_identifiers($k, FALSE, TRUE)] = $v;
+			$this->ar_set[$k] = $v;
 		}
 
 		return $this;
@@ -2440,7 +2440,7 @@ class KF_Database_activerecord {
 	{
 		foreach ($values as $key => $val)
 		{
-			$valstr[] = $key." = :" . $key;
+			$valstr[] = $this->_escape_identifiers($key, false, true)." = :" . $key;
 		}
 
 		$limit = ( ! $limit) ? '' : ' LIMIT '.$limit;

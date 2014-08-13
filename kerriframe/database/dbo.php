@@ -218,7 +218,7 @@ class KF_Database_Dbo extends KF_Database_activerecord
 		return $literal;
 	}
 
-	public function getQueries() {
+	public static function getQueries() {
 		return self::$qeuries;
 	}
 
