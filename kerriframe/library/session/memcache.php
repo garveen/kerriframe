@@ -14,7 +14,7 @@
 */
 class KF_Library_Session_Memcache
 {
-	public function __construct($config) {
+	public function __construct() {
 
 		session_set_save_handler(array(
 			$this,

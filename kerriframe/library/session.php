@@ -1,19 +1,23 @@
 <?php
 /**
-* Class and Function List:
-* Function list:
-* - __construct()
-* Classes list:
-* - KF_Library_Session
-*/
+ * Class and Function List:
+ * Function list:
+ * - __construct()
+ * Classes list:
+ * - KF_Library_Session
+ */
 class KF_Library_Session
 {
 	public function __construct() {
+		$sessionConfig = KF::getConfig('session');
+
 		//不使用 GET/POST 变量方式
 		ini_set('session.use_trans_sid', 0);
 
 		//设置垃圾回收最大生存时间
-		ini_set('session.gc_maxlifetime', $config['expire']);
+		if (isset($sessionConfig['expire'])) {
+			ini_set('session.gc_maxlifetime', $sessionConfig['expire']);
+		}
 
 		//使用 COOKIE 保存 SESSION ID 的方式
 		ini_set('session.use_cookies', 1);
@@ -25,10 +29,9 @@ class KF_Library_Session
 
 		ini_set('session.serialize_handler', 'php_serialize');
 
-		$sessionConfig = KF::getConfig('session');
 		if (isset($sessionConfig['manager']) && $sessionConfig['manager'] && $sessionConfig['manager'] != 'default') {
 			$className = 'KF_Library_Session_' . $sessionConfig['manager'];
-			new $className($sessionConfig['config']);
+			new $className();
 		}
 
 		session_start();
