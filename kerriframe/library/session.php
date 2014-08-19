@@ -27,8 +27,6 @@ class KF_Library_Session
 		$domain = KF::getConfig('cookie') ['domain'];
 		ini_set('session.cookie_domain', $domain);
 
-		ini_set('session.serialize_handler', 'php_serialize');
-
 		if (isset($sessionConfig['manager']) && $sessionConfig['manager'] && $sessionConfig['manager'] != 'default') {
 			$className = 'KF_Library_Session_' . $sessionConfig['manager'];
 			new $className();
