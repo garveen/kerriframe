@@ -1,13 +1,13 @@
 <?php
 /**
-* Class and Function List:
-* Function list:
-* - run()
-* - dispatch()
-* - callAction()
-* Classes list:
-* - KF_Application
-*/
+ * Class and Function List:
+ * Function list:
+ * - run()
+ * - dispatch()
+ * - callAction()
+ * Classes list:
+ * - KF_Application
+ */
 class KF_Application
 {
 	public function run() {
@@ -41,10 +41,17 @@ class KF_Application
 		if ($action === null) {
 			$action = 'index';
 		}
-		$controller->__action = $action;
-		if (method_exists($controller, '__preAction')) {
-			$controller->__preAction();
+
+		if ($action[0] == '_') {
+			KF::raise('access denied', 404);
 		}
+
+		$controller->__action = $action;
+
+		if (method_exists($controller, '_remap')) {
+			$controller->_remap($action, $request);
+		}
+
 		$callVar = array(
 			$controller,
 			$action

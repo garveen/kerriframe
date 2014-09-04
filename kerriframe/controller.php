@@ -1,12 +1,7 @@
 <?php
 abstract class KF_Controller
 {
-	public $_controllerName = '';
 	private $need_redirect = 0;
-
-	public function init() {
-		$this->_controllerName = $this->__objectName;
-	}
 
 	//直接输出时候使用
 	public function raw($data = null, $type = 'json') {

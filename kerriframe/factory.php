@@ -322,7 +322,11 @@ class KF_Factory
 	 */
 	public static function raise($e, $http_status = 404) {
 		if (KF::getConfig('environment') == 'debug') {
-			throw new Exception('Thrown by debug', 1, $e);
+			if ($e instanceof Exception) {
+				throw new Exception('Thrown by debug', 1, $e);
+			} else {
+				throw new Exception($e, $http_status);
+			}
 		}
 		if ($e instanceof Exception) {
 			KF::log($e, 'error');
