@@ -25,8 +25,6 @@ require KF_PATH . 'factory.php';
 
 class KF extends KF_Factory
 {
-	private function __construct() {
-	}
 
 	private static $ip = false;
 
@@ -36,6 +34,8 @@ class KF extends KF_Factory
 	protected static $_security;
 
 	public static function init() {
+		parent::init();
+
 		spl_autoload_register(['KF', 'autoload']);
 		require KF_PATH . 'functions.php';
 

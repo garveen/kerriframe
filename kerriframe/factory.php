@@ -27,18 +27,30 @@ define("STORE_DEFAULT_NAME", "main");
 /**
  * Factory class, generate common objects
  */
-class KF_Factory
+abstract class KF_Factory
 {
 	protected static $_security;
 
 	/**
-	 * singleton
+	 * static class
 	 */
-	private function __construct() {
+	final private function __construct() {
 	}
 
+	protected static function init() {
+		self::$classPrefix = KF::getConfig('class_prefix');
+		self::$prefixLength = strlen(self::$classPrefix);
+	}
+
+	protected static $classPrefix;
+	protected static $prefixLength;
+
 	public static function autoload($name) {
-		$name = strtolower(substr(strtr($name, '_', '/') , 3));
+		if (strncasecmp(self::$classPrefix, $name, self::$prefixLength) == 0) {
+			$name = strtolower(substr(strtr($name, '_', '/') , self::$prefixLength));
+		} else {
+			$name = strtolower(substr(strtr($name, '_', '/') , 3));
+		}
 
 		if (is_file($filename = KF_PATH . $name . '.php') || is_file($filename = KF_APP_PATH . $name . '.php')) {
 			require ($filename);
@@ -60,6 +72,8 @@ class KF_Factory
 	 */
 	public static function &getConfig($name = null) {
 		if (self::$_config == null) {
+			// not init yet, so autoload is not usable now
+			require KF_PATH . '/config.php';
 			self::$_config = new KF_Config;
 			require (KF_APP_PATH . 'config.php');
 			foreach ($config as $k => $v) {
