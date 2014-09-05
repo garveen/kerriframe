@@ -1,12 +1,12 @@
 <?php
 /**
-* Class and Function List:
-* Function list:
-* - display()
-* - __display()
-* Classes list:
-* - KF_Object
-*/
+ * Class and Function List:
+ * Function list:
+ * - display()
+ * - __display()
+ * Classes list:
+ * - KF_Object
+ */
 abstract class KF_Object
 {
 
@@ -29,8 +29,10 @@ abstract class KF_Object
 	}
 
 	final private function __display($fileName, $vars) {
-		$vars = (array)$vars;
-		extract($vars);
+		if ($vars) {
+			$vars = (array)$vars;
+			extract($vars);
+		}
 		require ($fileName);
 	}
 }
