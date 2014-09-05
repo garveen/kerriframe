@@ -83,8 +83,12 @@ class KF extends KF_Factory
 		}
 
 		// init manually
-		$widget->init($params);
-		$widget->display($template);
+		if (method_exists($widget, 'init')) {
+			$vars = $widget->init($params);
+		} else {
+			$vars = $params;
+		}
+		$widget->display($template, $vars);
 	}
 
 	/**

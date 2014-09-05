@@ -9,9 +9,10 @@
 class KF_Widget_Common extends KF_Widget
 {
 	public $default = [
-		'message' => 'Let\'s rock!',
+		'message' => '',
 	];
 	public function init($params = array()) {
-		$this->message = $params['message'];
+		$params['message'] .= 'rock!';
+		return $params;
 	}
 }
