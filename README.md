@@ -66,8 +66,8 @@ kerriframe 致力成为高效、低资源占用、易扩展的小型php框架。
 ##### 创建一个简单的控制器
 
 使用文本编辑器，创建一个 hello.php ，保存到 APP/controller 目录下。
-
 	<?php
+	// APP/controller/hello.php
 	class KF_Controller_Hello extends KF_Controller
 	{
 		public function init() {
@@ -78,7 +78,6 @@ kerriframe 致力成为高效、低资源占用、易扩展的小型php框架。
 			echo 'World！';
 		}
 	}
-	?>
 
 
 	现在访问
@@ -91,7 +90,7 @@ kerriframe 致力成为高效、低资源占用、易扩展的小型php框架。
 
 kf_controller_hello
 
-当类存在一个init方法时，该方法将被在资源初始化后自动调用。这样，你可以在init里面使用保留的类成员变量：
+当类存在一个 init 方法时，该方法将被在资源初始化后自动调用（参见加载类库）。这样，你可以在 init 里面使用保留的类成员变量：
 	__objectName
 	__objectPath
 以上两个变量提供了一种简易获取当前类信息的手段，可以方便地用在路径相关的场合。
@@ -99,8 +98,8 @@ kf_controller_hello
 ##### 方法
 
 如上例所示，当通过 URI 成功获取控制器后，如果根据 URI 无法获得方法名（亦即 URI 已经被用完），则会自动调用 index 方法。
-
 	<?php
+	// APP/controller/hello.php
 	class KF_Controller_Hello extends KF_Controller
 	{
 		public function init() {
@@ -115,7 +114,6 @@ kf_controller_hello
 			echo 'PHP!';
 		}
 	}
-	?>
 
 现在访问
 	example.com/index.php/hello/kerriframe/
@@ -172,6 +170,30 @@ kf_controller_hello
 
 #### 使用其它类库
 
+你可以：
+* 创建项目自有类库
+* 扩展内部类库
+
+
+##### 命名约定
+
+* 文件名全小写，且不含下划线
+* 类名格式为 前缀_路径_文件名，如 KF_Cache_Memcache
+
+##### 类文件
+一个简单的示例如下
+
+	<?php
+	// APP/thirdparty/encoder.php
+	class KF_Thirdparty_Encoder
+	{
+		public function some_method() {
+
+		}
+	}
+
+##### 加载类库
+
 根据你的类库保存位置，你可以简单地载入类库，无论是你自己的还是 kerriframe 的。
 
 	// library/foo.php
@@ -182,4 +204,63 @@ kf_controller_hello
 	$encoder = KF::getThirdparty('encoder');
 	$encoder->encode($bin);
 
+###### 传递参数
 
+在第二个参数传入数组，则将会自动展开，并传入 init 方法：
+
+	<?php
+	// APP/thirdparty/encoder.php
+	class KF_Thirdparty_Encoder
+	{
+		public function init($param1, $param2) {
+			echo $param1;
+			echo $param2;
+		}
+	}
+
+	// 在控制器文件
+	KF::getThirdparty($encoder, ['hello', 'encoder']);
+
+将会输出：
+	helloencoder
+
+##### 配置文件
+
+当在 APP/config 目录下的对应路径，存在与类文件同名的 php 时，其将被自动加载，内容将被附加在类的 __objectConfig 属性下。
+
+	<?php
+	// APP/config/model/name.php
+	return ['item' => 'value'];
+
+在控制器文件
+	$nameModel = KF::getModel('name');
+	// 不应该直接使用，但这里为了演示方便
+	var_dump($nameModel->__objectConfig);
+
+##### 扩展内部类库
+
+当在 APP/core 目录下的对应路径，存在与类文件同名的 php 时，其将被自动加载，但前缀必须与配置文件内的 class_prefix 段相同（默认为 MY_ ）：
+
+	<?php
+	// APP/core/controller.php
+	class MY_Controller extends KF_Controller {
+		public function display($action_template = null, $vars = array() , $returnOutput = false) {
+			return parent::display($action_template, $vars, $returnOutput);
+		}
+	}
+
+注意：KF 和 KF_Factory 不能被使用此方法扩展。
+
+
+##### 核心类
+
+以下类将被自动装载：
+
+* KF
+* KF_Factory
+* KF_Logger
+* KF_Application
+* KF_Controller
+* KF_Router
+* KF_Object
+* KF_Response
