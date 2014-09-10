@@ -3,6 +3,7 @@
  * Class and Function List:
  * Function list:
  * - __construct()
+ * - init()
  * - autoload()
  * - &getConfig()
  * - singleton()
@@ -15,8 +16,6 @@
  * - &getModel()
  * - &getWidget()
  * - __callStatic()
- * - &getMailer()
- * - getSnsClient()
  * - initApp()
  * - raise()
  * Classes list:
@@ -261,64 +260,6 @@ abstract class KF_Factory
 			self::raise(new KF_Exception("Undefined method KF::{$name}") , 500);
 		}
 	}
-
-	/**
-	 * 获取 mailer 对象
-	 *
-	 * @return Mailer 对象
-	 */
-	public static function &getMailer() {
-		if (self::$_mailer === null) {
-			require (ES_ROOT . '/utilities/phpmailer/class.phpmailer.php');
-			require (ES_ROOT . '/utilities/phpmailer/class.smtp.php');
-			self::$_mailer = new PHPMailer;
-			self::$_mailer->SetLanguage('zh', ES_ROOT . '/utilities/phpmailer/language/');
-
-			$conf = KF::getConfig();
-
-			$conf->mail_settings['isSMTP'] && self::$_mailer->IsSMTP();
-
-			self::$_mailer->Host = $conf->mail_settings['host'];
-			self::$_mailer->Sendmail = $conf->mail_settings['sendMailPath'];
-			self::$_mailer->CharSet = 'utf-8';
-			self::$_mailer->SMTPAuth = $conf->mail_settings['SMTPAuth'];
-			self::$_mailer->Username = $conf->mail_settings['username'];
-			self::$_mailer->Password = $conf->mail_settings['password'];
-			self::$_mailer->From = $conf->mail_settings['from'];
-			self::$_mailer->FromName = $conf->mail_settings['fromName'];
-			self::$_mailer->WordWrap = 60;
-		}
-
-		return self::$_mailer;
-	}
-
-	/**
-	 * 获得操作开放平台的Client类
-	 * @param string $platfrom qzone,sina
-	 * @param string $accessToken 某些不需要登录的api不应该填写accessToken
-	 * modified by rur 2012-07-12
-	 */
-	public static function getSnsClient($platform, $accessToken = null) {
-		require_once ES_ROOT . "/utilities/sns/client.php";
-		require_once ES_ROOT . "/utilities/oauth2/BaseOauth2.php";
-		require_once ES_ROOT . "/utilities/oauth2/Oauth2.php";
-		require_once ES_ROOT . '/utilities/oauth2/Client.php';
-		return new Client($platform, $accessToken);
-	}
-	private static $yarClients = array();
-
-	// public static function getYar($rpc_name = STORE_DEFAULT_NAME, $postfix = '') {
-	// 	if (isset(self::$yarClients[$rpc_name . $postfix])) {
-	// 		return self::$yarClients[$rpc_name . $postfix];
-	// 	}
-	// 	require_once ES_ROOT . '/utilities/yar.php';
-
-	// 	$yarClient = new NZYar(self::getConfig()->yar_servers[$rpc_name] . $postfix);
-	// 	self::$yarClients[$rpc_name] = $yarClient;
-	// 	return $yarClient;
-	// }
-
-
 
 	/**
 	 * skeleton generator
