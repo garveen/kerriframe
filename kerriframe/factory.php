@@ -130,6 +130,11 @@ abstract class KF_Factory
 				$obj->__objectName = $className;
 				$obj->__objectPath = $path;
 
+				// get the config
+				if (is_file($configFile = KF_APP_PATH . 'config/' . $path . '.php')) {
+					$obj->__objectConfig = include ($configFile);
+				}
+
 				if ($init && method_exists($obj, 'init')) {
 					if ($params === null) $params = array();
 					call_user_func_array([$obj, 'init'] , $params);
