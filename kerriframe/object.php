@@ -22,7 +22,8 @@ abstract class KF_Object
 		if ($returnOutput) {
 			return ob_get_clean();
 		} elseif (ob_get_level()) {
-			ob_flush();
+			//not ob_flush
+			echo ob_get_clean();
 		} else {
 			KF::singleton('response')->setContent(ob_get_clean());
 		}
