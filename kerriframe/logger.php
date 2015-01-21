@@ -19,9 +19,7 @@ class KF_Logger
 			$this->_enabled = FALSE;
 		}
 
-		if (is_numeric($config->log_threshold)) {
-			$this->_threshold = $this->_levels[strtoupper($config->log_threshold)];
-		}
+		$this->_threshold = $this->_levels[strtoupper($config->log_threshold)];
 
 		if ($config->log_date_format != '') {
 			$this->_date_fmt = $config->log_date_format;
