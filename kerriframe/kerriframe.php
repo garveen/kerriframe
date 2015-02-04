@@ -38,6 +38,9 @@ class KF extends KF_Factory
 
 		spl_autoload_register(['KF', 'autoload']);
 		require KF_PATH . 'functions.php';
+		if(is_file($filename = KF_APP_PATH . 'functions.php')) {
+			require $filename;
+		}
 
 		self::$_security = self::singleton('library/security');
 

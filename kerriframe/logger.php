@@ -61,7 +61,9 @@ class KF_Logger
 		if (!$fp = @fopen($filepath, 'ab')) {
 			return FALSE;
 		}
-
+		if(!is_string($msg)) {
+			$msg = print_r($msg, true);
+		}
 		$message.= $level . ' ' . (($level == 'INFO') ? ' -' : '-') . ' ' . date($this->_date_fmt) . ' --> ' . $msg . "\n";
 
 		flock($fp, LOCK_EX);
