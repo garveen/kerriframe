@@ -2418,7 +2418,7 @@ class KF_Database_activerecord {
 	function _insert_batch($table, $keys, $values)
 	{
 		array_map(array($this, 'escape'), $values);
-		return "INSERT INTO ".$table." (`".implode('`, `', $keys)."`) VALUES ".implode(', ', $values);
+		return "INSERT INTO ".$table." (".implode(', ', $keys).") VALUES ".implode(', ', $values);
 	}
 
 	// --------------------------------------------------------------------

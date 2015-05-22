@@ -144,7 +144,8 @@ class KF_Database_Dbo extends KF_Database_activerecord
 
 	public function lastInsertId() {
 		if (!$this->pdo) return false;
-		return $this->pdo->lastInsertId();
+		// 不使用pdo内置方法，存在bug
+		return $this->query('SELECT LAST_INSERT_ID()')->one();
 	}
 
 	private function replacePrefix($sql, $prefix = '@__') {
