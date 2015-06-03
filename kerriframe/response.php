@@ -10,6 +10,7 @@ class KF_Response
 		'content-type' => 'text/html; charset=UTF-8'
 	);
 	private static $body = '';
+	private static $response = '';
 	private static $html_headers = array();
 
 	public function header($key, $value = '', $overwrite = true) {
@@ -28,6 +29,10 @@ class KF_Response
 		self::$body .= $content;
 	}
 
+	public function setResponse($response) {
+		self::$response = $response;
+	}
+
 	public function outputHeader() {
 		foreach (self::$headers as $k => $v) {
 			header("{$k}:{$v}");
@@ -44,7 +49,12 @@ class KF_Response
 
 	public function flush() {
 		self::outputHeader();
-		self::outputContent();
+		if(self::$body) {
+			self::outputContent();
+		} else {
+			header("content-type: text/json");
+			echo json_encode(self::$response);
+		}
 	}
 
 	public function clean() {

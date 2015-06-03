@@ -77,8 +77,11 @@ class KF_Application
 		// load the class
 		$response = KF::singleton('response');
 		ob_start();
-		call_user_func_array($callVar, $request);
+		$ret = call_user_func_array($callVar, $request);
 		$content = ob_get_clean();
 		$response->setContent($content);
+		if($ret !== null) {
+			$response->setResponse($ret);
+		}
 	}
 }
