@@ -23,6 +23,7 @@ class KF_Database_Dbo extends KF_Database_activerecord
 	public $name;
 	private $params = array();
 	private $pdo = false;
+	private $trans_depth = 0;
 	public $debug = false;
 	public function __call($name, $args) {
 		if (!$this->pdo) {
@@ -147,6 +148,53 @@ class KF_Database_Dbo extends KF_Database_activerecord
 		// 不使用pdo内置方法，存在bug
 		return $this->query('SELECT LAST_INSERT_ID()')->one();
 	}
+
+	public function beginTransaction() {
+		if($this->trans_enabled) {
+			$this->trans_depth ++;
+			return true;
+		} else {
+			if (!$this->pdo) {
+				$this->_init();
+			}
+			$this->trans_enabled = true;
+			$this->trans_depth = 1;
+			return $this->pdo->beginTransaction();
+		}
+
+	}
+
+	public function commit() {
+		if(!$this->trans_enabled) {
+			return true;
+		}
+
+		if($this->trans_depth) {
+			$this->trans_depth--;
+			if(!$this->trans_depth) {
+				return $this->pdo->commit();
+			}
+		}
+		return true;
+	}
+
+	public function rollback() {
+		if(!$this->trans_enabled) {
+			return true;
+		}
+
+		if($this->trans_depth) {
+			$this->trans_depth--;
+			if(!$this->trans_depth) {
+				return $this->pdo->rollback();
+			}
+		}
+		return true;
+	}
+
+
+
+
 
 	private function replacePrefix($sql, $prefix = '@__') {
 		$sql = trim($sql);
