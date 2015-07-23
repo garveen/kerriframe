@@ -172,6 +172,7 @@ class KF_Database_Dbo extends KF_Database_activerecord
 		if($this->trans_depth) {
 			$this->trans_depth--;
 			if(!$this->trans_depth) {
+				$this->trans_enabled = false;
 				return $this->pdo->commit();
 			}
 		}
@@ -186,6 +187,7 @@ class KF_Database_Dbo extends KF_Database_activerecord
 		if($this->trans_depth) {
 			$this->trans_depth--;
 			if(!$this->trans_depth) {
+				$this->trans_enabled = false;
 				return $this->pdo->rollback();
 			}
 		}
